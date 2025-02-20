@@ -80,8 +80,6 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.android.osm)
-    implementation(libs.android.osm.compose)
     implementation(libs.play.services.maps)
     implementation(libs.google.maps.compose)
 }

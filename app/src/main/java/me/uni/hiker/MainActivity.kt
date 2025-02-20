@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -59,9 +61,11 @@ class MainActivity : ComponentActivity() {
                         composable<Screen.Others> {
                             OthersScreen()
                         }
-                        composable<Screen.MainMap> {
+                        composable<Screen.MainMap>(
+                            enterTransition = { slideInVertically { -it } },
+                            exitTransition = { slideOutVertically { -it } }
+                        ) {
                             GoogleMapScreen()
-//                            OSMScreen()
                         }
                     }
                 }

@@ -17,8 +17,6 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.10.0"
 constraintlayout = "2.1.4"
-osmdroid = "6.1.20"
-osmandroidcompose = "0.0.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,8 +40,6 @@ google-maps-compose = { module = "com.google.maps.android:maps-compose", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-android-osm = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
-android-osm-compose = { module = "tech.utsmankece:osm-android-compose", version.ref = "osmandroidcompose" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
