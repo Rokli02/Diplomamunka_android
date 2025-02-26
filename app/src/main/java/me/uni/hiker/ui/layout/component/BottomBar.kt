@@ -1,6 +1,5 @@
 package me.uni.hiker.ui.layout.component
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,7 +72,7 @@ fun BottomBar() {
                 println("Navigate To [Placeholder]")
             }
 
-            BottomBarMapItem() {
+            BottomBarMapItem {
                 coroutineScope.launch {
                     navController.navigate(Screen.MainMap)
                 }

@@ -5,12 +5,11 @@ import android.app.Application
 class App: Application() {
     override fun onCreate() {
         super.onCreate()
+        di = DependencyInjectionImpl(this)
         println("OnCreate")
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        println("OnTerminate")
+    companion object {
+        lateinit var di: DependencyInjection
     }
-
 }

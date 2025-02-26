@@ -2,7 +2,6 @@ package me.uni.hiker.ui.screen.main.others
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -12,7 +11,6 @@ import me.uni.hiker.R
 import me.uni.hiker.ui.layout.BasicLayout
 import me.uni.hiker.ui.layout.LocalNavController
 import me.uni.hiker.ui.layout.NavigationProvider
-import me.uni.hiker.ui.layout.component.TopBarIcon
 import me.uni.hiker.ui.layout.component.TopBarTitle
 import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.theme.HikeRTheme

@@ -40,6 +40,7 @@ fun GoogleMapScreen() {
         uiSettings = DefaultMapUiSettings.copy(
             compassEnabled = true,
             myLocationButtonEnabled = true,
+            mapToolbarEnabled = true,
         ),
     ) {
         Marker(

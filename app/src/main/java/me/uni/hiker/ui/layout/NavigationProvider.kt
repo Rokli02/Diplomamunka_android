@@ -7,7 +7,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
-private val LocalNavHostController: ProvidableCompositionLocal<NavHostController?> = staticCompositionLocalOf { null };
+private val LocalNavHostController: ProvidableCompositionLocal<NavHostController?> = staticCompositionLocalOf { null }
 
 val LocalNavController: NavHostController
     @Composable
