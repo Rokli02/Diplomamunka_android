@@ -9,19 +9,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import me.uni.hiker.R
 import me.uni.hiker.ui.layout.BasicLayout
-import me.uni.hiker.ui.layout.LocalNavController
-import me.uni.hiker.ui.layout.NavigationProvider
+import me.uni.hiker.ui.provider.LocalNavController
+import me.uni.hiker.ui.provider.NavigationProvider
 import me.uni.hiker.ui.layout.component.TopBarTitle
 import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.theme.HikeRTheme
 
-//TODO: Térkép implementálás (prototípussá válás)
-//      (https://utsmannn.github.io/osm-android-compose/#license)
-//      (https://maplibre.org/)
-
 @Composable
 fun OthersScreen() {
-    val logout = {}
     val navController = LocalNavController
 
     BasicLayout (

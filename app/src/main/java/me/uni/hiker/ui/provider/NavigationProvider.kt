@@ -1,4 +1,4 @@
-package me.uni.hiker.ui.layout
+package me.uni.hiker.ui.provider
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import me.uni.hiker.R
 import me.uni.hiker.ui.layout.AuthLayout
-import me.uni.hiker.ui.layout.LocalNavController
+import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.layout.TopBarProps
 
 @Composable

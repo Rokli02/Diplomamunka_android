@@ -13,8 +13,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import me.uni.hiker.ui.layout.NavigationProvider
-import me.uni.hiker.ui.layout.LocalNavController
+import me.uni.hiker.ui.provider.NavigationProvider
+import me.uni.hiker.ui.provider.LocalNavController
+import me.uni.hiker.ui.provider.SnackbarProvider
 import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.screen.auth.login.LoginScreen
 import me.uni.hiker.ui.screen.auth.signup.SignUpScreen
@@ -37,34 +38,36 @@ class MainActivity : ComponentActivity() {
         setContent {
             HikeRTheme {
                 NavigationProvider {
-                    NavHost(
-                        navController = LocalNavController,
-                        startDestination = Screen.Home,
-                        enterTransition = { EnterTransition.None },
-                        exitTransition = { ExitTransition.None }
-                    ) {
-                        navigation<Screen.Auth>(
-                            startDestination = Screen.Login,
+                    SnackbarProvider {
+                        NavHost(
+                            navController = LocalNavController,
+                            startDestination = Screen.Home,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
                         ) {
-                            composable<Screen.Login> {
-                                LoginScreen()
+                            navigation<Screen.Auth>(
+                                startDestination = Screen.Login,
+                            ) {
+                                composable<Screen.Login> {
+                                    LoginScreen()
+                                }
+                                composable<Screen.SignUp> {
+                                    SignUpScreen()
+                                }
                             }
-                            composable<Screen.SignUp> {
-                                SignUpScreen()
-                            }
-                        }
 
-                        composable<Screen.Home> {
-                            HomeScreen()
-                        }
-                        composable<Screen.Others> {
-                            OthersScreen()
-                        }
-                        composable<Screen.MainMap>(
-                            enterTransition = { slideInVertically { -it } },
-                            exitTransition = { slideOutVertically { -it } }
-                        ) {
-                            GoogleMapScreen()
+                            composable<Screen.Home> {
+                                HomeScreen()
+                            }
+                            composable<Screen.Others> {
+                                OthersScreen()
+                            }
+                            composable<Screen.MainMap>(
+                                enterTransition = { slideInVertically { -it } },
+                                exitTransition = { slideOutVertically { -it } }
+                            ) {
+                                GoogleMapScreen()
+                            }
                         }
                     }
                 }

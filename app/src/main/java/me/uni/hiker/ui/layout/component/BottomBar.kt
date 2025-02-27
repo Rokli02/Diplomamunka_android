@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import me.uni.hiker.R
-import me.uni.hiker.ui.layout.LocalNavController
+import me.uni.hiker.ui.provider.LocalNavController
+import me.uni.hiker.ui.provider.LocalSnackbarContext
 import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.CustomIconButtonColors
@@ -39,6 +39,7 @@ import me.uni.hiker.ui.theme.HikeRTheme
 @Composable
 fun BottomBar() {
     val coroutineScope = rememberCoroutineScope()
+    val snackbarContext = LocalSnackbarContext
 
     Surface (
         modifier = Modifier
@@ -70,6 +71,7 @@ fun BottomBar() {
                 text = "[Placeholder]",
             ) {
                 println("Navigate To [Placeholder]")
+                snackbarContext.showSnackbar("Navigate To [Placeholder]")
             }
 
             BottomBarMapItem {
@@ -83,6 +85,7 @@ fun BottomBar() {
                 text = "[Placeholder]"
             ) {
                 println("Navigate To [Placeholder]")
+                snackbarContext.showSnackbar("Navigate To [Placeholder]")
             }
 
             BottomBarItem(
@@ -135,8 +138,6 @@ private fun BottomBarItem(
 
 @Composable
 private fun BottomBarMapItem(onClick: () -> Unit) {
-    val context = LocalContext.current
-
     Column (
         modifier = Modifier.padding(horizontal = 14.dp),
         verticalArrangement = Arrangement.Top,
