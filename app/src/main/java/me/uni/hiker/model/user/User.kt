@@ -10,6 +10,7 @@ data class User(
     val name: String,
     val username: String,
     val email: String,
+    var token: String? = null,
     val createdAt: LocalDate,
 ) {
     companion object {

@@ -6,4 +6,11 @@
     <string name="login">Bejelentkezés</string>
     <string name="signup">Regisztráció</string>
     <string name="logout">Kijelentkezés</string>
+    <string name="exit_the_map">Kilépés a térképből</string>
+    <string name="map_drawer_title">Térkép funkciók</string>
+    <string name="view_tracks">Útvonalak megtekintése</string>
+    <string name="record_track">Útvonal rögzítés</string>
+    <string name="location_notification_channel_name">Bejárt útvonal rögzítés</string>
+    <string name="location_notification_title">Útvonal rögzítés</string>
+    <string name="location_notification_text">Az általad bejárt útvonal rögzítés alatt…</string>
 </resources>

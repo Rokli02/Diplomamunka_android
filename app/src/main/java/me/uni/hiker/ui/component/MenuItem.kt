@@ -1,4 +1,4 @@
-package me.uni.hiker.ui.screen.main.others
+package me.uni.hiker.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,13 +20,14 @@ import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.HikeRTheme
 
 @Composable
-fun OthersItem(
+fun MenuItem(
+    modifier: Modifier = Modifier,
     text: String,
-    icon: (Any)? = null,
+    icon: Any? = null,
     onClick: () -> Unit,
 ) {
     Row (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(42.dp)
             .clickable(onClick = onClick)
@@ -37,31 +35,11 @@ fun OthersItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
     ) {
-        if (icon == null) {
-            Spacer(modifier = Modifier.width(32.dp))
-        } else {
-            when (icon) {
-                is ImageVector -> {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = AppTheme.colors.onBackground,
-                    )
-                }
-                is Painter -> {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        painter = icon,
-                        contentDescription = null,
-                        tint = AppTheme.colors.onBackground,
-                    )
-                }
-                else -> {
-                    Spacer(modifier = Modifier.width(32.dp))
-                }
-            }
-        }
+        CustomIcon(
+            modifier = Modifier.width(32.dp),
+            icon = icon,
+            tint = AppTheme.colors.onBackground,
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 
@@ -69,6 +47,8 @@ fun OthersItem(
             text = text,
             fontSize = 18.sp,
             color = AppTheme.colors.onBackground,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
         )
     }
 }
@@ -77,10 +57,8 @@ fun OthersItem(
 @Composable
 private fun OthersItemPreview() {
     HikeRTheme {
-        OthersItem(
-            text = "Others Item Preview",
-        ) {
-
-        }
+        MenuItem(
+            text = "Menu Item Preview, but it is too long to display everything",
+        ) {}
     }
 }

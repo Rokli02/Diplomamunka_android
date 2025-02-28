@@ -71,7 +71,7 @@ val specifiedCustomColors = CustomColor(
     onInputBackground = Black,
     error = Red,
     onError = Black,
-    separator = LightGreen,
+    separator = Color.Gray,
     disabledBackground = Black.copy(alpha = .25f),
     disabled = Black.copy(alpha = .6f),
 )

@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import me.uni.hiker.ui.provider.NavigationProvider
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.SnackbarProvider
@@ -22,6 +24,7 @@ import me.uni.hiker.ui.screen.auth.signup.SignUpScreen
 import me.uni.hiker.ui.screen.main.home.HomeScreen
 import me.uni.hiker.ui.screen.main.others.OthersScreen
 import me.uni.hiker.ui.screen.map.GoogleMapScreen
+import me.uni.hiker.ui.screen.map.model.MapViewType
 import me.uni.hiker.ui.theme.Black
 import me.uni.hiker.ui.theme.BoneWhite
 import me.uni.hiker.ui.theme.Green
@@ -64,9 +67,16 @@ class MainActivity : ComponentActivity() {
                             }
                             composable<Screen.MainMap>(
                                 enterTransition = { slideInVertically { -it } },
-                                exitTransition = { slideOutVertically { -it } }
-                            ) {
-                                GoogleMapScreen()
+                                exitTransition = { slideOutVertically { -it } },
+                                deepLinks = listOf(
+                                    navDeepLink {
+                                        uriPattern = "${Screen.BASE_URI}/map/{initialScreen}"
+                                    },
+                                )
+                            ) { entry ->
+                                val initialScreen = entry.toRoute<Screen.MainMap>().initialScreen.let { MapViewType.valueOf(it) }
+
+                                GoogleMapScreen(initialScreen)
                             }
                         }
                     }

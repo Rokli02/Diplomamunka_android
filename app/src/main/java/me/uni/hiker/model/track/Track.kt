@@ -4,16 +4,16 @@ import androidx.compose.runtime.Immutable
 import java.time.LocalDate
 
 @Immutable
-data class Track(
+data class Track (
     val id: Long?,
     val remoteId: Long?,
     val name: String,
-    val lat: Double,
-    val lon: Double,
+    override val lat: Double,
+    override val lon: Double,
     val length: Float,
     val createdAt: LocalDate,
     val updatedAt: LocalDate,
-) {
+): AbstractTrack() {
     fun isShared(): Boolean { return remoteId != null }
 
     fun toEntity(userId: Long): me.uni.hiker.db.entity.Track {

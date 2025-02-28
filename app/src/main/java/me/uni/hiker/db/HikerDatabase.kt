@@ -6,6 +6,8 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.db.entity.LocalUser
+import me.uni.hiker.db.entity.Point
+import me.uni.hiker.db.entity.Track
 import me.uni.hiker.utils.DateFormatter
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -13,6 +15,8 @@ import java.time.LocalDateTime
 @Database(
     entities = [
         LocalUser::class,
+        Point::class,
+        Track::class,
    ],
     version = 1,
 )

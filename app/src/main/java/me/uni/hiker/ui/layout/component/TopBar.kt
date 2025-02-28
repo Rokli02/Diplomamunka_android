@@ -1,19 +1,21 @@
 package me.uni.hiker.ui.layout.component
 
-import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.AccountCircle
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.Favorite
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +36,7 @@ import me.uni.hiker.ui.theme.HikeRTheme
 @Composable
 fun TopBar(
     title: TopBarTitle,
-    icons: List<TopBarIcon>,
+    icons: List<TopBarIcon> = listOf(),
 ) {
     Surface (
         modifier = Modifier
@@ -53,17 +55,18 @@ fun TopBar(
             Row(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(.7f)
+                    .weight(1f, true)
                     .padding(start = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start,
             ) {
                 if (title.imageVector != null) {
                     Icon(
-                        modifier = Modifier.size(28.dp).padding(end = 6.dp),
+                        modifier = Modifier.size(24.dp),
                         imageVector = title.imageVector,
                         contentDescription = title.text
                     )
+                    Spacer(modifier = Modifier.width(10.dp))
                 }
 
                 Text(
@@ -77,12 +80,12 @@ fun TopBar(
 
             if (icons.isNotEmpty()) {
                 Row (
-                    modifier = Modifier.requiredWidth(80.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     icons.forEach { icon ->
                         IconButton(
+                            modifier = Modifier.padding(horizontal = 2.dp).aspectRatio(1f),
                             onClick = icon.onClick,
                             enabled = icon.enabled,
                             colors = CustomIconButtonColors

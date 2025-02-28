@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import me.uni.hiker.R
+import me.uni.hiker.ui.component.MenuItem
 import me.uni.hiker.ui.layout.BasicLayout
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.NavigationProvider
@@ -33,7 +34,7 @@ fun OthersScreen() {
         )
     ) {
         Column {
-            OthersItem(
+            MenuItem(
                 icon = Icons.Default.AccountCircle,
                 text = stringResource(id = R.string.login)
             ) {
