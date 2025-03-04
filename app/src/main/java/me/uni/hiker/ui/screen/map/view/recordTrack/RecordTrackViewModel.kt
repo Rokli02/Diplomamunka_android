@@ -40,6 +40,8 @@ class RecordTrackViewModel @Inject constructor(
     }
 
     fun startLocationService(context: Context) {
+        if (LocationForegroundService.isRunning) return
+
         viewModelScope.launch {
             recordedPoints.clear()
 
@@ -51,6 +53,8 @@ class RecordTrackViewModel @Inject constructor(
     }
 
     fun stopLocationService(context: Context) {
+        if (!LocationForegroundService.isRunning) return
+
         viewModelScope.launch {
             val intent = Intent(context, LocationForegroundService::class.java).apply {
                 action = LocationForegroundService.ACTION_STOP

@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.uni.hiker.R
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.entity.RecordedLocation
@@ -43,7 +44,7 @@ class LocationForegroundService : Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private var lastLocation: LastLocation? = null
+    private val lastLocation: LastLocation = LastLocation()
 
     @Inject lateinit var recordedLocationDAO: RecordedLocationDAO
 
@@ -66,7 +67,7 @@ class LocationForegroundService : Service() {
     }
 
     private fun start() {
-        lastLocation = LastLocation()
+        isRunning = true
 
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
@@ -74,9 +75,10 @@ class LocationForegroundService : Service() {
     }
 
     private fun stop() {
-        if (lastLocation == null) return
+        isRunning = false
 
         stopForeground(STOP_FOREGROUND_REMOVE)
+        saveCurrentLocationAsDestination()
         stopLocationUpdates()
         stopSelf()
     }
@@ -117,9 +119,9 @@ class LocationForegroundService : Service() {
     }
 
     private fun onLocationChanged(location: Location) {
-        lastLocation!!.addCurrentLocation(location)
+        lastLocation.addCurrentLocation(location)
 
-        val locationToSave = lastLocation!!.locationToSave()
+        val locationToSave = lastLocation.locationToSave()
         if (locationToSave != null) {
             Log.d("LocationForegroundService", "Saving location $locationToSave")
 
@@ -166,27 +168,30 @@ class LocationForegroundService : Service() {
         return channelId
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        // Save our current location to DB as a destination
+    private fun saveCurrentLocationAsDestination() {
         if (!checkForLackOfLocationPermission(this)) {
-            locationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener {
-                if (it != null) {
-                    //TODO: Ellenőrzéseket berakni, hogy ha pl. túl közeli az utolsó mentett ponthoz, ne mentse
+            locationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                null
+            ).addOnSuccessListener {
+                if (it == null) return@addOnSuccessListener
 
-                    serviceScope.launch {
-                        recordedLocationDAO.insertOne(
-                            RecordedLocation(
-                                lat = it.latitude,
-                                lon = it.longitude,
-                                createdAt = LocalDateTime.now(),
-                            )
+                //TODO: Ellenőrzéseket berakni, hogy ha pl. túl közeli az utolsó mentett ponthoz, ne mentse
+                runBlocking {
+                    recordedLocationDAO.insertOne(
+                        RecordedLocation(
+                            lat = it.latitude,
+                            lon = it.longitude,
+                            createdAt = LocalDateTime.now(),
                         )
-                    }
+                    )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
 
         serviceScope.cancel()
     }
@@ -199,6 +204,7 @@ class LocationForegroundService : Service() {
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
         const val NOTIFICATION_ID = 1
+        var isRunning = false
     }
 }
 
