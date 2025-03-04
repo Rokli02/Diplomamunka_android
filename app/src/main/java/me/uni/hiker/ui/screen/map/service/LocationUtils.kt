@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Looper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -15,8 +16,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import kotlin.math.atan2
@@ -82,7 +91,7 @@ fun isCurrentLocationEnabled(): Boolean {
     return hasPermission && isGpsEnabled
 }
 
-private fun getLocationPermissions(context: Context): Boolean {
+fun getLocationPermissions(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 }
@@ -121,4 +130,39 @@ fun calculateBearing(location1: Location, location2: Location): Double {
     return Math.toDegrees(atan2(y, x)).let {
         (it + 360) % 360
     }
+}
+
+fun createCurrentLocationFlow(
+    context: Context,
+    interval: Long = 1000,
+    minUpdateInterval: Long = interval,
+    maxUpdateInterval: Long = 1500L,
+): Flow<Location> = callbackFlow {
+    val locationProvider = LocationServices.getFusedLocationProviderClient(context)
+
+    val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval)
+        .setWaitForAccurateLocation(false)
+        .setMinUpdateIntervalMillis(minUpdateInterval)
+        .setMaxUpdateDelayMillis(maxUpdateInterval)
+        .build()
+
+    val locationCallback = object : LocationCallback() {
+    override fun onLocationResult(locationResult: LocationResult) {
+        super.onLocationResult(locationResult)
+        locationResult.lastLocation?.let {
+            trySend(it)
+        }
+    }
+}
+
+    locationProvider.requestLocationUpdates(
+        locationRequest,
+        locationCallback,
+        Looper.getMainLooper()
+    )
+
+    awaitClose {
+        locationProvider.removeLocationUpdates(locationCallback)
+    }
+
 }

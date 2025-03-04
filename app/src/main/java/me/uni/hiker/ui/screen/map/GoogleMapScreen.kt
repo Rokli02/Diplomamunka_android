@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import me.uni.hiker.R
 import me.uni.hiker.ui.provider.LocalNavController
@@ -23,11 +22,8 @@ import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackScreen
 
 @Composable
 fun GoogleMapScreen(initialScreenType: MapViewType) {
-    val context = LocalContext.current
     val navController = LocalNavController
-    var mapType by remember {
-        mutableStateOf(initialScreenType)
-    }
+    var mapType by remember (initialScreenType) { mutableStateOf(initialScreenType) }
 
     MapDrawer (
         modifier = Modifier.safeContentPadding(),

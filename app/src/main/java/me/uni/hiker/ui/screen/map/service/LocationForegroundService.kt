@@ -1,6 +1,5 @@
 package me.uni.hiker.ui.screen.map.service
 
-import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,26 +7,25 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.uni.hiker.R
@@ -42,19 +40,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LocationForegroundService : Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var locationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private val lastLocation: LastLocation = LastLocation()
-
     @Inject lateinit var recordedLocationDAO: RecordedLocationDAO
+    private lateinit var jobs: MutableList<Job>
+    private var isGPSEnabled = false
 
     override fun onCreate() {
         super.onCreate()
-        locationClient = LocationServices.getFusedLocationProviderClient(this)
-        serviceScope.launch {
-            recordedLocationDAO.prune()
-        }
-        // TODO: Check is GPS tracker enabled
+        jobs = mutableListOf()
     }
 
     override fun onStartCommand(intent: Intent?, flags:Int, startId: Int): Int {
@@ -84,58 +77,76 @@ class LocationForegroundService : Service() {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1500L)
-            .setWaitForAccurateLocation(false)
-            .setMinUpdateIntervalMillis(1500L)
-            .setMaxUpdateDelayMillis(2500L)
-            .build()
+        val context = this
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                locationResult.locations.let { locations ->
-                    for (location in locations) {
-                        Log.d("LocationForegroundService", "On Location Changed: $location")
+        if (!getLocationPermissions(this)) return
 
-                        onLocationChanged(location)
-                    }
+        serviceScope.launch {
+            val isGPSEnabledFlow = flow {
+                val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                while (currentCoroutineContext().isActive) {
+                    emit(manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    delay(5000)
                 }
             }
+
+            isGPSEnabledFlow.collect {
+                if (isGPSEnabled != it) {
+                    isGPSEnabled = it
+
+                    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(
+                        NOTIFICATION_ID,
+                        if (isGPSEnabled)
+                            createNotification()
+                        else createNotification(
+                            titleId = R.string.location_notification_disabled_gps_title,
+                            textId = R.string.location_notification_disabled_gps_text,
+                        ),
+                    )
+
+                }
+            }
+        }.also {
+            jobs.add(it)
         }
 
-        if (checkForLackOfLocationPermission(this)) {
-            return
+        serviceScope.launch {
+            createCurrentLocationFlow(
+                context = context,
+                interval = 1500L,
+                minUpdateInterval = 1500L,
+                maxUpdateInterval = 2500L
+            ).collect {
+                onLocationChanged(it)
+            }
+        }.also {
+            jobs.add(it)
         }
-
-        locationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
     }
 
     private fun stopLocationUpdates() {
-        locationClient.removeLocationUpdates(locationCallback)
+        jobs.forEach { it.cancel() }
     }
 
-    private fun onLocationChanged(location: Location) {
+    private suspend fun onLocationChanged(location: Location) {
         lastLocation.addCurrentLocation(location)
 
         val locationToSave = lastLocation.locationToSave()
         if (locationToSave != null) {
             Log.d("LocationForegroundService", "Saving location $locationToSave")
 
-            serviceScope.launch {
-                recordedLocationDAO.insertOne(RecordedLocation(
-                    lat = locationToSave.latitude,
-                    lon = locationToSave.longitude,
-                    createdAt = LocalDateTime.now(),
-                ))
-            }
+            recordedLocationDAO.insertOne(RecordedLocation(
+                lat = locationToSave.latitude,
+                lon = locationToSave.longitude,
+                createdAt = LocalDateTime.now(),
+            ))
         }
     }
 
-    private fun createNotification(): Notification {
+    private fun createNotification(
+        titleId: Int = R.string.location_notification_title,
+        textId: Int = R.string.location_notification_text,
+    ): Notification {
         val channelId = createNotificationChannel()
 
         val deepLinkIntent = Intent(
@@ -149,8 +160,8 @@ class LocationForegroundService : Service() {
         }
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle(getString(R.string.location_notification_title))
-            .setContentText(getString(R.string.location_notification_text))
+            .setContentTitle(getString(titleId))
+            .setContentText(getString(textId))
             .setSmallIcon(R.drawable.map_icon)
             .setContentIntent(deepLinkPendingIntent)
             .setOngoing(true)
@@ -169,15 +180,25 @@ class LocationForegroundService : Service() {
     }
 
     private fun saveCurrentLocationAsDestination() {
-        if (!checkForLackOfLocationPermission(this)) {
-            locationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                null
-            ).addOnSuccessListener {
-                if (it == null) return@addOnSuccessListener
+        if (!getLocationPermissions(this)) return
 
-                //TODO: Ellenőrzéseket berakni, hogy ha pl. túl közeli az utolsó mentett ponthoz, ne mentse
-                runBlocking {
+        LocationServices.getFusedLocationProviderClient(this).getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            null
+        ).addOnSuccessListener {
+            if (it == null) return@addOnSuccessListener
+
+            runBlocking {
+                val canInsertDestination: Boolean = recordedLocationDAO.getLastInserted()?.let { recordedLocation ->
+                    val targetLocation = Location("").apply {
+                        latitude = recordedLocation.lat
+                        longitude = recordedLocation.lon
+                    }
+
+                    getDistanceBetweenLocations(it, targetLocation) > LOCATION_CLOSENESS_THRESHOLD
+                } ?: true
+
+                if (canInsertDestination) {
                     recordedLocationDAO.insertOne(
                         RecordedLocation(
                             lat = it.latitude,
@@ -206,14 +227,4 @@ class LocationForegroundService : Service() {
         const val NOTIFICATION_ID = 1
         var isRunning = false
     }
-}
-
-fun checkForLackOfLocationPermission(context: Context): Boolean {
-    return ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    ) != PackageManager.PERMISSION_GRANTED
 }
