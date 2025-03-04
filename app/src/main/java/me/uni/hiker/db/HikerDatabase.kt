@@ -5,8 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import me.uni.hiker.db.dao.LocalUserDAO
+import me.uni.hiker.db.dao.PointDAO
+import me.uni.hiker.db.dao.RecordedLocationDAO
+import me.uni.hiker.db.dao.TrackDAO
 import me.uni.hiker.db.entity.LocalUser
 import me.uni.hiker.db.entity.Point
+import me.uni.hiker.db.entity.RecordedLocation
 import me.uni.hiker.db.entity.Track
 import me.uni.hiker.utils.DateFormatter
 import java.time.LocalDate
@@ -17,12 +21,16 @@ import java.time.LocalDateTime
         LocalUser::class,
         Point::class,
         Track::class,
+        RecordedLocation::class,
    ],
-    version = 1,
+    version = 2,
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class HikerDatabase : RoomDatabase() {
     abstract fun localUserDAO(): LocalUserDAO
+    abstract fun pointDAO(): PointDAO
+    abstract fun trackDAO(): TrackDAO
+    abstract fun recordedLocationDAO(): RecordedLocationDAO
 }
 
 class DatabaseTypeConverters {
@@ -30,20 +38,14 @@ class DatabaseTypeConverters {
     fun fromLocalDate(date: LocalDate?): String? {
         if (date == null) return null
 
-        return DateFormatter.format(date)
+        return DateFormatter.formatDate(date)
     }
 
     @TypeConverter
     fun toLocalDate(text: String?): LocalDate? {
         if (text == null) return null
 
-        return try {
-            DateFormatter.format(text)
-        } catch (nfe: NumberFormatException) {
-            println("Couldn't convert date to Local Date when taken out of DB!")
-
-            LocalDate.now()
-        }
+        return DateFormatter.formatDate(text)
     }
 
     @TypeConverter
@@ -57,12 +59,6 @@ class DatabaseTypeConverters {
     fun toLocalDateTime(text: String?): LocalDateTime? {
         if (text == null) return null
 
-        return try {
-            DateFormatter.formatTime(text)
-        } catch (nfe: RuntimeException) {
-            println("Couldn't convert date to Local Date when taken out of DB!")
-
-            LocalDateTime.now()
-        }
+        return DateFormatter.formatTime(text)
     }
 }

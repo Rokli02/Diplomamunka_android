@@ -16,7 +16,7 @@ data class User(
     companion object {
         fun fromEntity(entity: LocalUser): User {
             return User(
-                id = entity.id!!,
+                id = entity.id,
                 name = entity.name,
                 username = entity.username,
                 email = entity.email,

@@ -1,15 +1,7 @@
 package me.uni.hiker
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class App: Application() {
-    override fun onCreate() {
-        super.onCreate()
-        di = DependencyInjectionImpl(this)
-        println("OnCreate")
-    }
-
-    companion object {
-        lateinit var di: DependencyInjection
-    }
-}
+@HiltAndroidApp
+class App: Application()

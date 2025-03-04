@@ -14,7 +14,7 @@ import java.time.LocalDate
     ]
 )
 data class LocalUser(
-    @PrimaryKey(autoGenerate = true) val id: Long?,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "remote_id") var remoteId: Long?,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "username") val username: String,

@@ -3,6 +3,7 @@ package me.uni.hiker.ui.screen.map.service
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,17 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
+
+private const val EARTH_RADIUS_IN_METERS = 6371000.0
+/** Bearing difference threshold in degree */
+const val BEARING_DIFFERENCE_THRESHOLD = 3.0
+/** Location closeness threshold in meter */
+const val LOCATION_CLOSENESS_THRESHOLD = 4.99
 
 @Composable
 fun isCurrentLocationEnabled(): Boolean {
@@ -29,7 +41,7 @@ fun isCurrentLocationEnabled(): Boolean {
         val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         while (currentCoroutineContext().isActive) {
             emit(manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            delay(3000)
+            delay(5000)
         }
     }
 
@@ -73,4 +85,40 @@ fun isCurrentLocationEnabled(): Boolean {
 private fun getLocationPermissions(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+}
+
+/**
+ * This function uses the "Haversine formula" to calculate distance between two locations
+ */
+fun getDistanceBetweenLocations(location1: Location, location2: Location): Double {
+    val lat1Rad = Math.toRadians(location1.latitude)
+    val lat2Rad = Math.toRadians(location2.latitude)
+    val lon1Rad = Math.toRadians(location1.longitude)
+    val lon2Rad = Math.toRadians(location2.longitude)
+
+    val deltaLat = lat2Rad - lat1Rad
+    val deltaLon = lon2Rad - lon1Rad
+
+    val a = sin(deltaLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return EARTH_RADIUS_IN_METERS * c
+}
+
+/**
+ * Calculates the bearing of line produced by to points..
+ * @return Returns a value with type `Double` and is always between `0°` and `360°`
+ */
+fun calculateBearing(location1: Location, location2: Location): Double {
+    val dLon = Math.toRadians(location2.longitude - location1.longitude)
+    val loc1Lat = Math.toRadians(location1.latitude)
+    val loc2Lat = Math.toRadians(location2.latitude)
+
+    val y = sin(dLon) * cos(loc2Lat)
+    val x = cos(loc1Lat) * sin(loc2Lat) -
+            sin(loc1Lat) * cos(loc2Lat) * cos(dLon)
+
+    return Math.toDegrees(atan2(y, x)).let {
+        (it + 360) % 360
+    }
 }

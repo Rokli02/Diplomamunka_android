@@ -18,7 +18,7 @@ import java.time.LocalDate
     ]
 )
 data class Track(
-    @PrimaryKey(autoGenerate = true) val id: Long?,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "remote_id") val remoteId: Long?,
     @ColumnInfo(name = "user_id") val userId: Long?,
     @ColumnInfo(name = "name") val name: String,

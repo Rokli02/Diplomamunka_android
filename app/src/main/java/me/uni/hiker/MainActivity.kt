@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import dagger.hilt.android.AndroidEntryPoint
 import me.uni.hiker.ui.provider.NavigationProvider
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.SnackbarProvider
@@ -30,6 +31,7 @@ import me.uni.hiker.ui.theme.BoneWhite
 import me.uni.hiker.ui.theme.Green
 import me.uni.hiker.ui.theme.HikeRTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

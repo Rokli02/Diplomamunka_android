@@ -29,8 +29,8 @@ fun BoxScope.AllTracksScreen() {
 
     AllTracksView(
         tracks = listOf(
-            Track(name = "Bal-Alsó", lat = 45.76092, lon = 15.81845, updatedAt = LocalDate.now(), createdAt = LocalDate.now(), length = 0f, id = null, remoteId = null),
-            Track(name = "Jobb-Felsó", lat = 48.77124, lon = 23.30561, updatedAt = LocalDate.now(), createdAt = LocalDate.now(), length = 0f, id = null, remoteId = null),
+            Track(name = "Bal-Alsó", lat = 45.76092, lon = 15.81845, updatedAt = LocalDate.now(), createdAt = LocalDate.now(), length = 0f, remoteId = null, id = 1),
+            Track(name = "Jobb-Felsó", lat = 48.77124, lon = 23.30561, updatedAt = LocalDate.now(), createdAt = LocalDate.now(), length = 0f, remoteId = null, id = 2),
         ),
         cameraPositionState = cameraPositionState,
         mapUiSettings = mapUiSettings,

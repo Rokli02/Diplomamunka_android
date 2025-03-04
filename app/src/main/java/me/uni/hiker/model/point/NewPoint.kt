@@ -8,7 +8,6 @@ data class NewPoint(
 ) {
     fun toEntity(order: Int, trackId: Long): Point {
         return Point(
-            id = null,
             lat = this.lat,
             lon = this.lon,
             order = order,

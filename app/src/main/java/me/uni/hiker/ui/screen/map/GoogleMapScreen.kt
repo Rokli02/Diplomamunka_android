@@ -26,6 +26,8 @@ import me.uni.hiker.ui.screen.map.component.TopBar
 import me.uni.hiker.ui.screen.map.model.ActionType
 import me.uni.hiker.ui.screen.map.model.MapViewType
 import me.uni.hiker.ui.screen.map.view.allTracks.AllTracksScreen
+import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackScreen
+import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackView
 import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackViewModel
 
 @Composable
@@ -35,8 +37,6 @@ fun GoogleMapScreen(initialScreenType: MapViewType) {
     var mapType by remember {
         mutableStateOf(initialScreenType)
     }
-    //TODO: Majd törölni, csak ideiglenesen van itt
-    val recordTrackViewModel: RecordTrackViewModel = viewModel()
 
     MapDrawer (
         modifier = Modifier.safeContentPadding(),
@@ -72,28 +72,7 @@ fun GoogleMapScreen(initialScreenType: MapViewType) {
                         TODO()
                     }
                     MapViewType.RECORD_TRACK -> {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Blue)
-                        ) {
-                            Text(modifier = Modifier.align(Alignment.Center), text = "Test Record")
-                            Button(
-                                modifier = Modifier.align(Alignment.TopCenter),
-                                onClick = {
-                                    recordTrackViewModel.startLocationService(context)
-                                },
-                            ) {
-                                Text(text = "Start Notification")
-                            }
-                            Button(
-                                modifier = Modifier.align(Alignment.BottomCenter),
-                                onClick = {
-                                    recordTrackViewModel.stopLocationService(context)
-                                },
-                            ) {
-                                Text(text = "Stop Notification")
-                            }
-                        }
+                        RecordTrackScreen()
                     }
                 }
 

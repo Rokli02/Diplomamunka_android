@@ -1,36 +1,28 @@
 package me.uni.hiker.utils
 
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object DateFormatter {
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN)
-    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-ddThh:mm:ss", Locale.GERMAN)
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.GERMAN)
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.GERMAN)
 
-    fun format(date: LocalDate): String {
-        return dateFormat.format(date)
+    fun formatDate(date: LocalDate): String {
+        return date.format(dateFormatter)
     }
 
-    fun format(date: String): LocalDate {
-        val (year, month, day) = date.split("-").map { it.toInt() }
-
-        return LocalDate.of(year, month - 1, day)
+    fun formatDate(date: String): LocalDate {
+        return LocalDate.parse(date, dateFormatter)
     }
 
     fun formatTime(dateTime: LocalDateTime): String {
-        return dateTimeFormat.format(dateTime)
+        return dateTime.format(dateTimeFormatter)
     }
 
     fun formatTime(dateTime: String): LocalDateTime {
-        return dateTime.split("T").let { ti ->
-            if (ti.size != 2) throw RuntimeException()
-
-            val (year, month, day) = ti[0].split("-").map { it.toInt() }
-            val (hour, min, sec) = ti[1].split(":").map { it.toInt() }
-
-            return@let LocalDateTime.of(year, month, day, hour, min, sec)
-        }
+        println("formatTime ($dateTime)")
+        return LocalDateTime.from(dateTimeFormatter.parse(dateTime))
     }
 }

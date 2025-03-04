@@ -11,7 +11,6 @@ data class NewUser(
 ) {
     fun toEntity(): LocalUser {
         return LocalUser(
-            id = null,
             remoteId = null,
             name = this.name,
             username = this.username,

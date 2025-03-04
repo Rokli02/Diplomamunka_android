@@ -11,7 +11,6 @@ data class NewTrack(
 ) {
     fun toEntity(userId: Long): Track {
         return Track(
-            id = null,
             remoteId = null,
             userId = userId,
             name = this.name,

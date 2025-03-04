@@ -1,6 +1,7 @@
 package me.uni.hiker.model.point
 
 import androidx.compose.runtime.Immutable
+import me.uni.hiker.db.entity.RecordedLocation
 
 @Immutable
 data class Point(
@@ -10,6 +11,14 @@ data class Point(
 ) {
     companion object {
         private fun fromEntity(entity: me.uni.hiker.db.entity.Point): Point {
+            return Point(
+                id = entity.id,
+                lat = entity.lat,
+                lon = entity.lon,
+            )
+        }
+
+        fun fromEntity(entity: RecordedLocation): Point {
             return Point(
                 id = entity.id!!,
                 lat = entity.lat,

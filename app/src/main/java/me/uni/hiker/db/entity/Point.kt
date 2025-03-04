@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey
     ]
 )
 data class Point(
-    @PrimaryKey(autoGenerate = true) val id: Long?,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "lat") val lat: Double,
     @ColumnInfo(name = "lon") val lon: Double,
     @ColumnInfo(name = "order") val order: Int,

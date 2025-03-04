@@ -23,24 +23,38 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.uni.hiker.R
+import me.uni.hiker.db.dao.RecordedLocationDAO
+import me.uni.hiker.db.entity.RecordedLocation
 import me.uni.hiker.ui.screen.Screen
+import me.uni.hiker.ui.screen.map.model.LastLocation
 import me.uni.hiker.ui.screen.map.model.MapViewType
+import java.time.LocalDateTime
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class LocationForegroundService : Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private var lastLocation: LastLocation? = null
+
+    @Inject lateinit var recordedLocationDAO: RecordedLocationDAO
 
     override fun onCreate() {
         super.onCreate()
         locationClient = LocationServices.getFusedLocationProviderClient(this)
+        serviceScope.launch {
+            recordedLocationDAO.prune()
+        }
+        // TODO: Check is GPS tracker enabled
     }
 
     override fun onStartCommand(intent: Intent?, flags:Int, startId: Int): Int {
@@ -53,12 +67,16 @@ class LocationForegroundService : Service() {
     }
 
     private fun start() {
+        lastLocation = LastLocation()
+
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
         startLocationUpdates()
     }
 
     private fun stop() {
+        if (lastLocation == null) return
+
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopLocationUpdates()
         stopSelf()
@@ -76,20 +94,15 @@ class LocationForegroundService : Service() {
                 super.onLocationResult(locationResult)
                 locationResult.locations.let { locations ->
                     for (location in locations) {
+                        Log.d("LocationForegroundService", "On Location Changed: $location")
+
                         onLocationChanged(location)
                     }
                 }
             }
         }
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (checkForLackOfLocationPermission(this)) {
             return
         }
 
@@ -105,11 +118,19 @@ class LocationForegroundService : Service() {
     }
 
     private fun onLocationChanged(location: Location) {
-        // TODO: Communication between "LocationForegroundService" and other parts of the app
-        // https://barbeau.medium.com/room-kotlin-flow-the-modern-android-architecture-for-location-aware-apps-9c110e12e31a
-        serviceScope.launch {
-            Log.d("LocationForegroundService", "New location: ${location.latitude}, ${location.longitude}")
-            // Here you can send the location to your ViewModel or save it in a database
+        lastLocation!!.addCurrentLocation(location)
+
+        val locationToSave = lastLocation!!.locationToSave()
+        if (locationToSave != null) {
+            Log.d("LocationForegroundService", "Saving location $locationToSave")
+
+            serviceScope.launch {
+                recordedLocationDAO.insertOne(RecordedLocation(
+                    lat = locationToSave.latitude,
+                    lon = locationToSave.longitude,
+                    createdAt = LocalDateTime.now(),
+                ))
+            }
         }
     }
 
@@ -148,6 +169,26 @@ class LocationForegroundService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        // Save our current location to DB as a destination
+        if (!checkForLackOfLocationPermission(this)) {
+            locationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener {
+                if (it != null) {
+                    //TODO: Ellenőrzéseket berakni, hogy ha pl. túl közeli az utolsó mentett ponthoz, ne mentse
+
+                    serviceScope.launch {
+                        recordedLocationDAO.insertOne(
+                            RecordedLocation(
+                                lat = it.latitude,
+                                lon = it.longitude,
+                                createdAt = LocalDateTime.now(),
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
         serviceScope.cancel()
     }
 
@@ -160,4 +201,14 @@ class LocationForegroundService : Service() {
         const val ACTION_STOP = "ACTION_STOP"
         const val NOTIFICATION_ID = 1
     }
+}
+
+fun checkForLackOfLocationPermission(context: Context): Boolean {
+    return ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED
 }

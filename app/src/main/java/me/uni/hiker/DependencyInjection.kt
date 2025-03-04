@@ -2,20 +2,48 @@ package me.uni.hiker
 
 import android.content.Context
 import androidx.room.Room
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import me.uni.hiker.db.HikerDatabase
+import me.uni.hiker.db.dao.LocalUserDAO
+import me.uni.hiker.db.dao.PointDAO
+import me.uni.hiker.db.dao.RecordedLocationDAO
+import me.uni.hiker.db.dao.TrackDAO
+import javax.inject.Singleton
 
-interface DependencyInjection {
-    val db: HikerDatabase
-}
-
-class DependencyInjectionImpl (
-    private val appContext: Context,
-): DependencyInjection {
-    override val db: HikerDatabase by lazy {
-        Room.databaseBuilder(
-            appContext.applicationContext,
+@Module
+@InstallIn(SingletonComponent::class)
+class DependencyInjection () {
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): HikerDatabase {
+        return Room.databaseBuilder(
+            context,
             HikerDatabase::class.java,
             name = "hiker"
         ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun provideLocalUserDAO(db: HikerDatabase): LocalUserDAO {
+        return db.localUserDAO()
+    }
+
+    @Provides
+    fun providePointDAO(db: HikerDatabase): PointDAO {
+        return db.pointDAO()
+    }
+
+    @Provides
+    fun provideTrackDAO(db: HikerDatabase): TrackDAO {
+        return db.trackDAO()
+    }
+
+    @Provides
+    fun provideRecordedLocationDAO(db: HikerDatabase): RecordedLocationDAO {
+        return db.recordedLocationDAO()
     }
 }
