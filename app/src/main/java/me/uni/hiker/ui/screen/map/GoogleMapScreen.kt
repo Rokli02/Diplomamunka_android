@@ -59,7 +59,9 @@ fun GoogleMapScreen(initialScreenType: MapViewType) {
                         TODO()
                     }
                     MapViewType.RECORD_TRACK -> {
-                        RecordTrackScreen()
+                        RecordTrackScreen(goBack = {
+                            mapType = MapViewType.ALL_TRACKS
+                        })
                     }
                 }
 

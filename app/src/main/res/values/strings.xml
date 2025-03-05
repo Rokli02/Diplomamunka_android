@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">HikeR</string>
     <string name="home_page">Kezdőlap</string>
+    <string name="permission_denied">A hozzáférési jogokat elutasította</string>
+    <string name="please_grant_permission">Kérem engedélyezze azokat a funkció használatához</string>
+    <string name="grant">Engedélyezés</string>
     <string name="map">Térkép</string>
     <string name="settings_page">Beállítások</string>
     <string name="login">Bejelentkezés</string>

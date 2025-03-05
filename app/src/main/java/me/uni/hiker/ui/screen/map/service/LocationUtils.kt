@@ -1,6 +1,7 @@
 package me.uni.hiker.ui.screen.map.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -39,57 +40,6 @@ private const val EARTH_RADIUS_IN_METERS = 6371000.0
 const val BEARING_DIFFERENCE_THRESHOLD = 3.0
 /** Location closeness threshold in meter */
 const val LOCATION_CLOSENESS_THRESHOLD = 4.99
-
-@Composable
-fun isCurrentLocationEnabled(): Boolean {
-    val context = LocalContext.current
-
-    var hasPermission by remember { mutableStateOf(getLocationPermissions(context)) }
-    var isGpsEnabled by remember { mutableStateOf(false) }
-    val gpsStatusFlow = flow {
-        val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        while (currentCoroutineContext().isActive) {
-            emit(manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            delay(5000)
-        }
-    }
-
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { permissions ->
-            hasPermission = when {
-                permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                    true
-                }
-
-                permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                    true
-                }
-
-                else -> {
-                    false
-                }
-            }
-        }
-    )
-
-    LaunchedEffect(Unit) {
-        if (!hasPermission) {
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-
-        gpsStatusFlow.collect {
-            if (isGpsEnabled != it) isGpsEnabled = it
-        }
-    }
-
-    return hasPermission && isGpsEnabled
-}
 
 fun getLocationPermissions(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -132,6 +82,7 @@ fun calculateBearing(location1: Location, location2: Location): Double {
     }
 }
 
+@SuppressLint("MissingPermission")
 fun createCurrentLocationFlow(
     context: Context,
     interval: Long = 1000,
@@ -147,13 +98,13 @@ fun createCurrentLocationFlow(
         .build()
 
     val locationCallback = object : LocationCallback() {
-    override fun onLocationResult(locationResult: LocationResult) {
-        super.onLocationResult(locationResult)
-        locationResult.lastLocation?.let {
-            trySend(it)
+        override fun onLocationResult(locationResult: LocationResult) {
+            super.onLocationResult(locationResult)
+            locationResult.lastLocation?.let {
+                trySend(it)
+            }
         }
     }
-}
 
     locationProvider.requestLocationUpdates(
         locationRequest,
@@ -164,5 +115,68 @@ fun createCurrentLocationFlow(
     awaitClose {
         locationProvider.removeLocationUpdates(locationCallback)
     }
+}
 
+fun isGPSEnabledFlow(context: Context): Flow<Boolean> = flow {
+    val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    while (currentCoroutineContext().isActive) {
+        emit(manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        delay(5000)
+    }
+}
+
+@Composable
+fun rememberGPSEnabled(locationPermissionGranted: Boolean = true): Boolean {
+    var isGpsEnabled by remember { mutableStateOf(false) }
+    val gpsStatusFlow = isGPSEnabledFlow(LocalContext.current)
+
+    LaunchedEffect(locationPermissionGranted) {
+        if (locationPermissionGranted) {
+            gpsStatusFlow.collect {
+                if (isGpsEnabled != it) isGpsEnabled = it
+            }
+        }
+    }
+
+    return isGpsEnabled
+}
+
+@Composable
+fun rememberLocationPermissionAndRequest(onPermissionDenied: () -> Unit = {}): Boolean {
+    val context = LocalContext.current
+    var hasPermission by remember { mutableStateOf(getLocationPermissions(context)) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            hasPermission = when {
+                permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                    true
+                }
+
+                permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                    true
+                }
+
+                else -> {
+                    onPermissionDenied()
+
+                    false
+                }
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasPermission) {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    return hasPermission
 }

@@ -5,6 +5,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -20,7 +21,7 @@ private val LocalSnackbarState: ProvidableCompositionLocal<SnackbarContext?> = s
 
 val LocalSnackbarContext: SnackbarContext
     @Composable
-    get() = if (LocalSnackbarState.current == null) throw Error("NavHostController has not been initialized in this scope") else LocalSnackbarState.current!!
+    get() = if (LocalSnackbarState.current == null) throw Error("LocalSnackbarState has not been initialized in this scope") else LocalSnackbarState.current!!
 
 
 @Composable
@@ -44,13 +45,29 @@ data class SnackbarContext(
     private val state: SnackbarHostState,
     private val coroutineScope: CoroutineScope,
 ) {
-    fun showSnackbar(message: String, duration: SnackbarDuration = SnackbarDuration.Short) {
+    fun showSnackbar(
+        message: String,
+        duration: SnackbarDuration = SnackbarDuration.Short,
+        action: SnackbarAction? = null,
+        withDismissAction: Boolean = true,
+    ) {
         coroutineScope.launch {
             state.showSnackbar(
                 message = message,
                 duration = duration,
-                withDismissAction = true,
-            )
+                actionLabel = action?.label,
+                withDismissAction = withDismissAction,
+            ).also {
+                if (it == SnackbarResult.ActionPerformed && action != null) {
+                    action.onClick()
+                }
+            }
         }
     }
 }
+
+@Immutable
+data class SnackbarAction(
+    val label: String,
+    val onClick: () -> Unit
+)

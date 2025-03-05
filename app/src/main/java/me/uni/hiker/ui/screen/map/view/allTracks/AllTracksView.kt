@@ -10,10 +10,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.DefaultMapUiSettings
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import me.uni.hiker.R
@@ -30,8 +30,7 @@ private val hungaryNortheasePoint = LatLng(48.77124, 23.30561)
 fun BoxScope.AllTracksView(
     tracks: List<AbstractTrack>,
     cameraPositionState: CameraPositionState,
-    mapUiSettings: MapUiSettings,
-    isMyLocationEnabled: Boolean = false,
+    isCurrentLocationEnabled: Boolean = false,
 ) {
     val context = LocalContext.current
     
@@ -39,12 +38,17 @@ fun BoxScope.AllTracksView(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
-            isMyLocationEnabled = isMyLocationEnabled,
+            isMyLocationEnabled = isCurrentLocationEnabled,
             mapType = MapType.TERRAIN,
             minZoomPreference = 8f,
             latLngBoundsForCameraTarget = LatLngBounds(hungarySoutwestPoint, hungaryNortheasePoint),
         ),
-        uiSettings = mapUiSettings,
+        uiSettings = DefaultMapUiSettings.copy(
+            compassEnabled = true,
+            myLocationButtonEnabled = isCurrentLocationEnabled,
+            mapToolbarEnabled = false,
+            zoomControlsEnabled = true,
+        ),
     ) {
         if (tracks.isNotEmpty()) {
             fun onSimpleTrackClick(track: Track) {
