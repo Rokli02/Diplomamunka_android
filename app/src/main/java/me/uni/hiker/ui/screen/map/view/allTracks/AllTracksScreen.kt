@@ -15,6 +15,8 @@ private val middleOfHungary = LatLng(47.48856, 19.04892)
 @Composable
 fun BoxScope.AllTracksScreen() {
     // TODO: GoogleMap ViewModel
+    // TODO: https://medium.com/@yogesh_shinde/jetpack-compose-bottomsheet-b4e9402a53f7
+    //       Ha rákattintunk az egyik útvonalra, egy nyíljon fel és meglehessen nézni a részleteit
     val hasLocationPermission = rememberLocationPermissionAndRequest()
     val isGPSEnabled = rememberGPSEnabled(hasLocationPermission)
     val cameraPositionState = rememberCameraPositionState {

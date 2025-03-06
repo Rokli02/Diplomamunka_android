@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
+import me.uni.hiker.db.entity.RecordedLocation
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -40,6 +41,10 @@ private const val EARTH_RADIUS_IN_METERS = 6371000.0
 const val BEARING_DIFFERENCE_THRESHOLD = 3.0
 /** Location closeness threshold in meter */
 const val LOCATION_CLOSENESS_THRESHOLD = 4.99
+/** Min travelled distance in meters */
+private const val MIN_TRAVELLED_DISTANCE = 500.0
+/** Min recorded locaitons*/
+private const val MIN_RECORDED_LOCATIONS = 10
 
 fun getLocationPermissions(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -54,6 +59,24 @@ fun getDistanceBetweenLocations(location1: Location, location2: Location): Doubl
     val lat2Rad = Math.toRadians(location2.latitude)
     val lon1Rad = Math.toRadians(location1.longitude)
     val lon2Rad = Math.toRadians(location2.longitude)
+
+    val deltaLat = lat2Rad - lat1Rad
+    val deltaLon = lon2Rad - lon1Rad
+
+    val a = sin(deltaLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return EARTH_RADIUS_IN_METERS * c
+}
+
+/**
+ * This function uses the "Haversine formula" to calculate distance between two locations
+ */
+fun getDistanceBetweenLocations(location1: RecordedLocation, location2: RecordedLocation): Double {
+    val lat1Rad = Math.toRadians(location1.lat)
+    val lat2Rad = Math.toRadians(location2.lat)
+    val lon1Rad = Math.toRadians(location1.lon)
+    val lon2Rad = Math.toRadians(location2.lon)
 
     val deltaLat = lat2Rad - lat1Rad
     val deltaLon = lon2Rad - lon1Rad
@@ -179,4 +202,17 @@ fun rememberLocationPermissionAndRequest(onPermissionDenied: () -> Unit = {}): B
     }
 
     return hasPermission
+}
+
+fun areRecordedPointsValid(locations: List<RecordedLocation>): Boolean {
+    if (locations.size > MIN_RECORDED_LOCATIONS) return true
+
+    var travelledDistance = 0.0
+    for (index in 0..locations.size - 2) {
+        travelledDistance += getDistanceBetweenLocations(locations[index], locations[index + 1])
+
+        if (travelledDistance > MIN_TRAVELLED_DISTANCE) return true
+    }
+
+    return false
 }

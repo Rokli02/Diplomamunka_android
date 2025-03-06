@@ -19,7 +19,7 @@ interface TrackDAO {
     suspend fun updateOne(track: Track)
 
     @Insert
-    suspend fun insertOne(track: Track)
+    suspend fun insertOne(track: Track): Long
 
     @Delete
     suspend fun deleteOne(track: Track)

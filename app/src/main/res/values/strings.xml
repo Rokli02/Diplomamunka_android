@@ -18,4 +18,12 @@
     <string name="location_notification_text">Az általad bejárt útvonal rögzítés alatt…</string>
     <string name="location_notification_disabled_gps_title">Útvonal rögzítés megszakadt</string>
     <string name="location_notification_disabled_gps_text">Kapcsold be a "Helymeghatározást" a folytatáshoz</string>
+    <string name="invalid_recorded_points">A rögzített túra túl rövide, ahhoz hogy rögzítésre kerüljön</string>
+    <string name="unknown_exception">Ismeretlen hiba történt</string>
+    <string name="save">Mentés</string>
+    <string name="cancel">Mégse</string>
+    <string name="name_of_track">Túra neve</string>
+    <string name="save_new_track_modal_title">Adj nevet a túrának</string>
+    <string name="turn_on_gps">Kapcsold be a GPS-t</string>
+    <string name="turn_on_gps_text">Ahhoz hogy használhasd az adott funkciót, be kell kapcsolnod az eszközödön a "Helymegosztás"-t </string>
 </resources>

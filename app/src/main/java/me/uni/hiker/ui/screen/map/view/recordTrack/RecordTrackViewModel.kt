@@ -19,10 +19,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import me.uni.hiker.R
+import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
+import me.uni.hiker.db.dao.TrackDAO
 import me.uni.hiker.db.entity.RecordedLocation
+import me.uni.hiker.exception.InvalidDataException
+import me.uni.hiker.model.point.NewPoint
 import me.uni.hiker.model.point.Point
+import me.uni.hiker.model.track.NewTrack
 import me.uni.hiker.ui.screen.map.service.LocationForegroundService
+import me.uni.hiker.ui.screen.map.service.areRecordedPointsValid
 import me.uni.hiker.ui.screen.map.service.createCurrentLocationFlow
 import me.uni.hiker.ui.screen.map.service.getLocationPermissions
 import javax.inject.Inject
@@ -33,6 +40,8 @@ private val middleOfHungary = LatLng(47.48856, 19.04892)
 class RecordTrackViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val recordedLocationDAO: RecordedLocationDAO,
+    private val trackDAO: TrackDAO,
+    private val pointDAO: PointDAO,
 ) : ViewModel() {
     var isRecording by mutableStateOf(LocationForegroundService.isRunning)
     val recordedPoints = mutableStateListOf<Point>()
@@ -128,15 +137,28 @@ class RecordTrackViewModel @Inject constructor(
         }
     }
 
-    fun saveRecordedTrack() {
-        TODO("Implement")
+    suspend fun saveRecordedTrack(trackName: String) {
+        // Get from DB all recordedTracks
+        val points = recordedLocationDAO.getAll()
+
+        // Check if those can be saved
+        if (!areRecordedPointsValid(points)) throw InvalidDataException(context.getString(R.string.invalid_recorded_points))
+
+        // Create a NewTrack and save it
+        val newTrack = NewTrack.fromRecordedPoints(trackName, points)
+
+        // Get saved track's id
+        val trackId = trackDAO.insertOne(newTrack.toEntity(null))
+
+        // Save RecordedTracks with the id
+        pointDAO.insertAll(NewPoint.toEntityList(points, trackId))
     }
 
-    fun dropRecordedTrack() {
-        TODO("Implement")
+    suspend fun dropRecordedTrack() {
+        recordedLocationDAO.prune()
+        recordedPoints.clear()
     }
 
-    //TODO: Felhasználni az UI-ban
     fun hasRecordedTrack(): Boolean {
         return recordedPoints.size != 0
     }

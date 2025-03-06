@@ -14,12 +14,12 @@ interface RecordedLocationDAO {
     @Query("DELETE FROM recorded_location")
     suspend fun prune()
 
-    @Query("SELECT * FROM recorded_location ORDER BY created_at DESC LIMIT 1")
+    @Query("SELECT * FROM recorded_location ORDER BY id DESC LIMIT 1")
     fun getLastInsertedFlow(): Flow<RecordedLocation?>
 
-    @Query("SELECT * FROM recorded_location ORDER BY created_at DESC LIMIT 1")
+    @Query("SELECT * FROM recorded_location ORDER BY id DESC LIMIT 1")
     suspend fun getLastInserted(): RecordedLocation?
 
-    @Query("SELECT * FROM recorded_location ORDER BY created_at ASC")
+    @Query("SELECT * FROM recorded_location ORDER BY id ASC")
     suspend fun getAll(): List<RecordedLocation>
 }

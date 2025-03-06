@@ -49,17 +49,22 @@ data class SnackbarContext(
         message: String,
         duration: SnackbarDuration = SnackbarDuration.Short,
         action: SnackbarAction? = null,
-        withDismissAction: Boolean = true,
+        dismissAction: (() -> Unit)? = {},
     ) {
         coroutineScope.launch {
             state.showSnackbar(
                 message = message,
                 duration = duration,
                 actionLabel = action?.label,
-                withDismissAction = withDismissAction,
+                withDismissAction = dismissAction != null,
             ).also {
-                if (it == SnackbarResult.ActionPerformed && action != null) {
-                    action.onClick()
+                when (it) {
+                    SnackbarResult.ActionPerformed -> {
+                        action?.onClick?.invoke()
+                    }
+                    SnackbarResult.Dismissed -> {
+                        dismissAction?.invoke()
+                    }
                 }
             }
         }
