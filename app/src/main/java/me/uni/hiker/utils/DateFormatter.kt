@@ -22,7 +22,6 @@ object DateFormatter {
     }
 
     fun formatTime(dateTime: String): LocalDateTime {
-        println("formatTime ($dateTime)")
         return LocalDateTime.from(dateTimeFormatter.parse(dateTime))
     }
 }

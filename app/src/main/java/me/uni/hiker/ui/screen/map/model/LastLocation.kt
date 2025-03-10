@@ -76,7 +76,7 @@ data class LastLocation(
 
         // If "bearing" is null, the direction hasn't changed, we don't need to save until there is a value
         val bearing = getBearingOrNull()
-        Log.d("LocationForegroundService", "Current bearing is $bearing")
+
         if (bearing == null) {
             shiftLocations()
 

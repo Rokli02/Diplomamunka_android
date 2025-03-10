@@ -6,7 +6,7 @@ import java.time.LocalDate
 @Immutable
 data class Track (
     val id: Long,
-    val remoteId: Long?,
+    val remoteId: Long? = null,
     val name: String,
     override val lat: Double,
     override val lon: Double,
@@ -16,17 +16,18 @@ data class Track (
 ): AbstractTrack() {
     fun isShared(): Boolean { return remoteId != null }
 
-    fun toEntity(userId: Long): me.uni.hiker.db.entity.Track {
-        return me.uni.hiker.db.entity.Track(
-            id = this.id,
-            name = this.name,
-            remoteId = this.remoteId,
-            userId = userId,
-            lat = this.lat,
-            lon = this.lon,
-            length = this.length,
-            createdAt = this.createdAt,
-            updatedAt = LocalDate.now(),
-        )
+    companion object {
+        fun fromEntity(entity: me.uni.hiker.db.entity.Track): Track {
+            return Track(
+                id = entity.id,
+                remoteId = entity.remoteId,
+                name = entity.name,
+                lat = entity.lat,
+                lon = entity.lon,
+                length = entity.length,
+                createdAt = entity.createdAt!!,
+                updatedAt = entity.updatedAt!!,
+            )
+        }
     }
 }

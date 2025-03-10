@@ -1,6 +1,6 @@
 package me.uni.hiker.ui.screen.map
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -12,22 +12,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import me.uni.hiker.R
 import me.uni.hiker.ui.provider.LocalNavController
+import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.screen.map.component.MapDrawer
 import me.uni.hiker.ui.screen.map.component.TopBar
 import me.uni.hiker.ui.screen.map.model.ActionType
-import me.uni.hiker.ui.screen.map.model.MapViewType
 import me.uni.hiker.ui.screen.map.view.allTracks.AllTracksScreen
 import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackScreen
 
 @Composable
-fun GoogleMapScreen(initialScreenType: MapViewType) {
+fun GoogleMapScreen() {
     val navController = LocalNavController
     val context = LocalContext.current
+    val mapNavController = rememberNavController()
+    var topBarTitle by remember { mutableStateOf(context.getString(R.string.app_name)) }
 
-    var mapType by remember (initialScreenType) { mutableStateOf(initialScreenType) }
-    val topBarTitle = remember(mapType) { "${context.getString(R.string.app_name)}-${getTitleByMapType(mapType, context)}" }
+    fun changeTopBarTitle(title: String) {
+        topBarTitle = "${context.getString(R.string.app_name)}-$title"
+    }
 
     MapDrawer (
         modifier = Modifier.safeContentPadding(),
@@ -35,12 +43,14 @@ fun GoogleMapScreen(initialScreenType: MapViewType) {
             navController.popBackStack()
         },
         onItemClick = { actionType ->
-            mapType = when (actionType) {
+            when (actionType) {
                 ActionType.RECORD_TRACK -> {
-                    MapViewType.RECORD_TRACK
+                    mapNavController.popBackStack()
+                    mapNavController.navigate(Screen.RecordTrackMap)
                 }
                 ActionType.VIEW_TRACKS -> {
-                    MapViewType.ALL_TRACKS
+                    mapNavController.popBackStack()
+                    mapNavController.navigate(Screen.AllTrackMap)
                 }
             }
         }
@@ -55,29 +65,41 @@ fun GoogleMapScreen(initialScreenType: MapViewType) {
 
         ) {
             Box(modifier = Modifier.padding(it)) {
-                when (mapType) {
-                    MapViewType.ALL_TRACKS -> {
+                NavHost(navController = mapNavController, startDestination = Screen.AllTrackMap) {
+                    composable<Screen.AllTrackMap> {
+                        LifecycleStartEffect(Unit) {
+                            changeTopBarTitle(context.getString(R.string.view_tracks))
+
+                            onStopOrDispose {}
+                        }
+
                         AllTracksScreen()
                     }
-                    MapViewType.TRACK_DETAILS -> {
-                        TODO()
-                    }
-                    MapViewType.RECORD_TRACK -> {
+                    composable<Screen.RecordTrackMap>(
+                        deepLinks = listOf(
+                            navDeepLink {
+                                uriPattern = "${Screen.BASE_URI}/map/record"
+                            },
+                        )
+                    ) {
+                        LifecycleStartEffect(Unit) {
+                            changeTopBarTitle(context.getString(R.string.record_track))
+
+                            onStopOrDispose {}
+                        }
+
                         RecordTrackScreen(goBack = {
-                            mapType = MapViewType.ALL_TRACKS
+                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = true)) {
+                                mapNavController.navigate(route = Screen.AllTrackMap)
+                            }
                         })
                     }
+                    composable<Screen.TrackDetailsMap> {
+//                        val trackId = entry.toRoute<Screen.TrackDetailsMap>().trackId
+                        TODO()
+                    }
                 }
-
             }
         }
-    }
-}
-
-fun getTitleByMapType(mapType: MapViewType, context: Context): String {
-    return when (mapType) {
-        MapViewType.ALL_TRACKS -> context.getString(R.string.view_tracks)
-        MapViewType.TRACK_DETAILS -> TODO()
-        MapViewType.RECORD_TRACK -> context.getString(R.string.record_track)
     }
 }

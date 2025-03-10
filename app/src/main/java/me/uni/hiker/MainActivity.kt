@@ -72,13 +72,11 @@ class MainActivity : ComponentActivity() {
                                 exitTransition = { slideOutVertically { -it } },
                                 deepLinks = listOf(
                                     navDeepLink {
-                                        uriPattern = "${Screen.BASE_URI}/map/{initialScreen}"
+                                        uriPattern = "${Screen.BASE_URI}/map/record"
                                     },
                                 )
-                            ) { entry ->
-                                val initialScreen = entry.toRoute<Screen.MainMap>().initialScreen.let { MapViewType.valueOf(it) }
-
-                                GoogleMapScreen(initialScreen)
+                            ) {
+                                GoogleMapScreen()
                             }
                         }
                     }

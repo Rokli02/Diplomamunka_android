@@ -34,30 +34,28 @@ fun BoxScope.RecordedMapUIView(
             .align(Alignment.BottomStart)
             .padding(start = 12.dp, bottom = 32.dp)
     ) {
-        if (hasRecordedTrack) {
+        if (isRecording) {
+            Button(
+                onClick = {
+                    stopLocationService(context)
+                },
+            ) {
+                Text(text = "Stop Notification")
+            }
+        } else if (hasRecordedTrack) {
             Button(onClick = saveRecordedTrack) {
                 Text(text = "Save Recorded Track")
             }
             Button(onClick = dropRecordedTrack) {
                 Text(text = "Drop Recorded Track")
             }
-        } else {
-            if (isRecording) {
-                Button(
-                    onClick = {
-                        stopLocationService(context)
-                    },
-                ) {
-                    Text(text = "Stop Notification")
-                }
-            } else if (isGPSEnabled) {
-                Button(
-                    onClick = {
-                        startLocationService(context)
-                    },
-                ) {
-                    Text(text = "Start Notification")
-                }
+        } else if (isGPSEnabled) {
+            Button(
+                onClick = {
+                    startLocationService(context)
+                },
+            ) {
+                Text(text = "Start Notification")
             }
         }
     }

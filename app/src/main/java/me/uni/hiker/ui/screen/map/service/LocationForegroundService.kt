@@ -1,5 +1,6 @@
 package me.uni.hiker.ui.screen.map.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -133,8 +134,6 @@ class LocationForegroundService : Service() {
 
         val locationToSave = lastLocation.locationToSave()
         if (locationToSave != null) {
-            Log.d("LocationForegroundService", "Saving location $locationToSave")
-
             recordedLocationDAO.insertOne(RecordedLocation(
                 lat = locationToSave.latitude,
                 lon = locationToSave.longitude,
@@ -151,7 +150,7 @@ class LocationForegroundService : Service() {
 
         val deepLinkIntent = Intent(
             Intent.ACTION_VIEW,
-            "${Screen.BASE_URI}/map/${MapViewType.RECORD_TRACK.name}".toUri()
+            "${Screen.BASE_URI}/map/record".toUri()
         )
 
         val deepLinkPendingIntent: PendingIntent? = TaskStackBuilder.create(this).run {
@@ -179,6 +178,7 @@ class LocationForegroundService : Service() {
         return channelId
     }
 
+    @SuppressLint("MissingPermission")
     private fun saveCurrentLocationAsDestination() {
         if (!getLocationPermissions(this)) return
 

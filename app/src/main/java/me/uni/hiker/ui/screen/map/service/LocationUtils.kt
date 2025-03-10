@@ -30,6 +30,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import me.uni.hiker.db.entity.RecordedLocation
+import me.uni.hiker.model.track.Track
+import me.uni.hiker.model.track.AbstractTrack
+import me.uni.hiker.model.track.ClusteredTrack
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -150,7 +153,7 @@ fun isGPSEnabledFlow(context: Context): Flow<Boolean> = flow {
 
 @Composable
 fun rememberGPSEnabled(locationPermissionGranted: Boolean = true): Boolean {
-    var isGpsEnabled by remember { mutableStateOf(false) }
+    var isGpsEnabled by remember { mutableStateOf(true) }
     val gpsStatusFlow = isGPSEnabledFlow(LocalContext.current)
 
     LaunchedEffect(locationPermissionGranted) {
@@ -215,4 +218,41 @@ fun areRecordedPointsValid(locations: List<RecordedLocation>): Boolean {
     }
 
     return false
+}
+
+fun clusterTracks(tracks: List<Track>, clusterDistanceThreshold: Double): List<AbstractTrack> {
+    if (tracks.isEmpty()) return listOf()
+
+    val clusteredTracks = mutableListOf<AbstractTrack>()
+//    val clusteredTracks = dbTracks.map(me.uni.hiker.model.track.Track::fromEntity)
+
+    tracks.forEach { track ->
+        clusteredTracks.forEachIndexed { i, clusteredTrack ->
+            if (distanceOfPoints(track, clusteredTrack) < clusterDistanceThreshold) {
+                when (clusteredTrack) {
+                    is Track -> {
+                        clusteredTracks[i] = ClusteredTrack.fromTracks(track, clusteredTrack)
+                    }
+                    is ClusteredTrack -> {
+                        val weight = clusteredTrack.size
+
+                        clusteredTrack.size++
+                        clusteredTrack.lat = (clusteredTrack.lat * weight + track.lat) / clusteredTrack.size
+                        clusteredTrack.lon = (clusteredTrack.lon * weight + track.lon) / clusteredTrack.size
+                    }
+                }
+
+                return@forEach
+            }
+        }
+
+        clusteredTracks.add(track)
+    }
+
+
+    return clusteredTracks
+}
+
+private fun distanceOfPoints(point1: AbstractTrack, point2: AbstractTrack): Double {
+    return sqrt((point2.lat - point1.lat).pow(2) - (point2.lon - point1.lon).pow(2))
 }

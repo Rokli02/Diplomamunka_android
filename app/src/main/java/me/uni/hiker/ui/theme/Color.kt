@@ -158,6 +158,13 @@ val CancelButtonColors = ButtonColors(
     disabledContentColor = specifiedCustomColors.disabled,
 )
 
+val DefaultButtonColors = ButtonColors(
+    containerColor = Blue,
+    contentColor = Black,
+    disabledContainerColor = Blue.copy(.8f),
+    disabledContentColor = specifiedCustomColors.disabled,
+)
+
 val CustomCardColors = CardColors(
     containerColor = specifiedCustomColors.surface,
     contentColor = specifiedCustomColors.onSurface,
