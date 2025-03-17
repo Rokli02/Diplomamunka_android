@@ -7,15 +7,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.google.maps.android.compose.CameraMoveStartedReason
 import me.uni.hiker.model.track.Track
+import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.screen.map.service.rememberGPSEnabled
 import me.uni.hiker.ui.screen.map.service.rememberLocationPermissionAndRequest
 
 
 @Composable
 fun AllTracksScreen(
-    allTrackViewModel: AllTrackViewModel = hiltViewModel()
+    mapNavController: NavHostController,
+    allTrackViewModel: AllTrackViewModel = hiltViewModel(),
 ) {
     val hasLocationPermission = rememberLocationPermissionAndRequest()
     val isGPSEnabled = rememberGPSEnabled(hasLocationPermission)
@@ -48,5 +51,18 @@ fun AllTracksScreen(
     AllTrackUIView(
         focusedTrack = focusedTrack,
         unfocusTrack = unfocusTrack,
+        goToDetails = { track ->
+            var isRemote = false
+
+            val id = if (track.id != null) { track.id } else {
+                isRemote = true
+
+                track.remoteId
+            }
+
+            if (id != null) {
+                mapNavController.navigate(Screen.TrackDetailsMap(id, isRemote))
+            }
+        }
     )
 }

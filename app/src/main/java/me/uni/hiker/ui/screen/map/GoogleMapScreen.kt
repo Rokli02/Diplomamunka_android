@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import me.uni.hiker.R
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.screen.Screen
@@ -25,6 +26,7 @@ import me.uni.hiker.ui.screen.map.component.TopBar
 import me.uni.hiker.ui.screen.map.model.ActionType
 import me.uni.hiker.ui.screen.map.view.allTracks.AllTracksScreen
 import me.uni.hiker.ui.screen.map.view.recordTrack.RecordTrackScreen
+import me.uni.hiker.ui.screen.map.view.trackDetails.TrackDetailsScreen
 
 @Composable
 fun GoogleMapScreen() {
@@ -73,7 +75,9 @@ fun GoogleMapScreen() {
                             onStopOrDispose {}
                         }
 
-                        AllTracksScreen()
+                        AllTracksScreen(
+                            mapNavController = mapNavController,
+                        )
                     }
                     composable<Screen.RecordTrackMap>(
                         deepLinks = listOf(
@@ -94,9 +98,19 @@ fun GoogleMapScreen() {
                             }
                         })
                     }
-                    composable<Screen.TrackDetailsMap> {
-//                        val trackId = entry.toRoute<Screen.TrackDetailsMap>().trackId
-                        TODO()
+                    composable<Screen.TrackDetailsMap> { entry ->
+                        val tdm = entry.toRoute<Screen.TrackDetailsMap>()
+
+                        LifecycleStartEffect(Unit) {
+                            changeTopBarTitle(context.getString(R.string.track_details))
+
+                            onStopOrDispose {}
+                        }
+
+                        TrackDetailsScreen(
+                            trackId = tdm.trackId,
+                            isRemote = tdm.isRemote,
+                        )
                     }
                 }
             }

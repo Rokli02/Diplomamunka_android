@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 @Immutable
 data class Track (
-    val id: Long,
+    val id: Long? = null,
     val remoteId: Long? = null,
     val name: String,
     override val lat: Double,
@@ -14,8 +14,6 @@ data class Track (
     val createdAt: LocalDate,
     val updatedAt: LocalDate,
 ): AbstractTrack() {
-    fun isShared(): Boolean { return remoteId != null }
-
     companion object {
         fun fromEntity(entity: me.uni.hiker.db.entity.Track): Track {
             return Track(

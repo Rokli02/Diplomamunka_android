@@ -28,13 +28,15 @@ import me.uni.hiker.ui.theme.AcceptButtonColors
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.DefaultButtonColors
 import me.uni.hiker.ui.theme.HikeRTheme
+import java.math.RoundingMode
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllTrackUIView(
     focusedTrack: Track?,
-    unfocusTrack: () -> Unit
+    unfocusTrack: () -> Unit,
+    goToDetails: (Track) -> Unit,
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
 
@@ -64,7 +66,7 @@ fun AllTrackUIView(
                     color = AppTheme.colors.onSurface,
                 )
                 Text(
-                    text = "${focusedTrack.length} ${stringResource(id = R.string.meter)}",
+                    text = "${focusedTrack.length.toBigDecimal().setScale(2, RoundingMode.HALF_EVEN)} ${stringResource(id = R.string.meter)}",
                     fontSize = 19.sp,
                     maxLines = 1,
                     color = AppTheme.colors.onSurface,
@@ -80,7 +82,9 @@ fun AllTrackUIView(
                 ) {
                     Button(
                         colors = AcceptButtonColors,
-                        onClick = { /*TODO Továbbítson a details oldalra*/ }
+                        onClick = {
+                            goToDetails(focusedTrack)
+                        }
                     ) {
                         Text(
                             text = stringResource(R.string.view),
@@ -92,7 +96,7 @@ fun AllTrackUIView(
                     // TODO: Csak akkor jelenjen meg, ha be van jelentkezve a felhasználó
                     //       Ha van remote Id, akkor "Mentés", ha nincs, akkor "Megosztás"
                     //       Ha a tiéd a túra, akkor ne jelenjen meg a mentés gomb
-                    if (!focusedTrack.isShared()) {
+                    if (focusedTrack.remoteId == null) {
                         Button(
                             colors = DefaultButtonColors,
                             onClick = { /*TODO Megosztani a túrát másokkal */ }
@@ -137,7 +141,8 @@ private fun AllTrackUIViewPreview() {
                 updatedAt = LocalDate.now(),
                 remoteId = null
             ),
-            unfocusTrack = {}
+            unfocusTrack = {},
+            goToDetails = {}
         )
     }
 }

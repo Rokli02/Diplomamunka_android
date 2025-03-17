@@ -76,7 +76,7 @@ fun BottomBar() {
 
             BottomBarMapItem {
                 coroutineScope.launch {
-                    navController.navigate(Screen.MainMap())
+                    navController.navigate(Screen.MainMap)
                 }
             }
 

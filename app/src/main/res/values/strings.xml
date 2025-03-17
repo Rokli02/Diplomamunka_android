@@ -13,6 +13,7 @@
     <string name="map_drawer_title">Térkép funkciók</string>
     <string name="view_tracks">Útvonalak megtekintése</string>
     <string name="record_track">Útvonal rögzítés</string>
+    <string name="track_details">Útvonal megtekintés</string>
     <string name="location_notification_channel_name">Útvonal rögzítő</string>
     <string name="location_notification_title">Útvonal rögzítés</string>
     <string name="location_notification_text">Az általad bejárt útvonal rögzítés alatt…</string>

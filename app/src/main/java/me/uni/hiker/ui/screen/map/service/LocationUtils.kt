@@ -224,7 +224,6 @@ fun clusterTracks(tracks: List<Track>, clusterDistanceThreshold: Double): List<A
     if (tracks.isEmpty()) return listOf()
 
     val clusteredTracks = mutableListOf<AbstractTrack>()
-//    val clusteredTracks = dbTracks.map(me.uni.hiker.model.track.Track::fromEntity)
 
     tracks.forEach { track ->
         clusteredTracks.forEachIndexed { i, clusteredTrack ->
