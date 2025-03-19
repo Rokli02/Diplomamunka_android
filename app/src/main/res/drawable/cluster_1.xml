@@ -4,13 +4,13 @@
 	android:viewportWidth="512"
 	android:viewportHeight="512">
 	<path
-		android:fillColor="#1228C4"
+		android:fillColor="#4155DD"
 		android:fillType="nonZero"
 		android:pathData="m256 512c-141.6 0-256-114.4-256-256 0-141.6 114.4-256 256-256 141.6 0 256 114.4 256 256 0 141.6-114.4 256-256 256z"
 		android:strokeWidth="1"
 		android:strokeColor="#00000000"/>
 	<path
-		android:fillColor="#04127B"
+		android:fillColor="#1D31C7"
 		android:fillType="nonZero"
 		android:pathData="m256 354c-54.2 0-98-43.8-98-98 0-54.2 43.8-98 98-98 54.2 0 98 43.8 98 98 0 54.2-43.8 98-98 98z"
 		android:strokeWidth="1"

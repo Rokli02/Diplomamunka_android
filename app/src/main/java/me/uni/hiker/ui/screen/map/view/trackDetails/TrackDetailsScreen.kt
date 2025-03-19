@@ -24,7 +24,6 @@ fun TrackDetailsScreen(
         } else {
             trackDetailsViewModel.getTrackDetails(trackId)
         }.also {
-            Log.d("TrackDetailsViewModel", "")
             trackDetailsViewModel.track?.also {
                 trackDetailsViewModel.focusOnPoint(LatLng(it.lat, it.lon))
             }
@@ -32,17 +31,15 @@ fun TrackDetailsScreen(
 
     }
 
-    if (trackDetailsViewModel.track == null) {
-        Loading()
-
-        return
-    }
-
     TrackDetailsView(
         cameraPositionState = trackDetailsViewModel.cameraPositionState,
         isGpsEnabled = isLocationEnabled && isGpsEnabled,
         points = trackDetailsViewModel.points,
     )
+
+    if (trackDetailsViewModel.track == null) {
+        Loading()
+    }
 
     //TODO: TrackDetailsUIView
     //          A kezdő pont és a cél legyen megjelölve és start és egy cél zászlóval

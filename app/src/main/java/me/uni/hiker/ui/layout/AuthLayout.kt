@@ -23,13 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import me.uni.hiker.R
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.HikeRTheme
 
@@ -86,7 +84,7 @@ private fun TopBar(props: TopBarProps) {
 
             Text(
                 modifier = Modifier.requiredWidth(IntrinsicSize.Max),
-                text = stringResource(id = R.string.login),
+                text = props.title,
                 textAlign = TextAlign.Center,
                 fontSize = 19.sp,
                 fontWeight = FontWeight.W500,

@@ -1,7 +1,6 @@
 package me.uni.hiker.ui.screen
 
 import kotlinx.serialization.Serializable
-import me.uni.hiker.ui.screen.map.model.MapViewType
 
 sealed class Screen {
     // Main Screens

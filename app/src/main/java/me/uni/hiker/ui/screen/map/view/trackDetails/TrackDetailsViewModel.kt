@@ -2,6 +2,7 @@ package me.uni.hiker.ui.screen.map.view.trackDetails
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -28,14 +29,14 @@ class TrackDetailsViewModel @Inject constructor(
     val cameraPositionState: CameraPositionState = CameraPositionState(CameraPosition.fromLatLngZoom(middleOfHungary, 14f))
     var track by mutableStateOf<Track?>(null)
         private set
-    var points = mutableListOf<Point>()
+    var points = mutableStateListOf<Point>()
         private set
 
     suspend fun getRemoteTrackDetails(trackId: Long) {
         TODO("Http kérés a szerver felé")
     }
     suspend fun getTrackDetails(trackId: Long) {
-        delay(2500)
+        delay(750)
 
         track = trackDao.findById(id = trackId, userId = null)?.let{ Track.fromEntity(it) }
         if (track != null) {
@@ -44,8 +45,6 @@ class TrackDetailsViewModel @Inject constructor(
                 addAll(pointDAO.findAllByTrack(trackId).let(Point::fromEntityList))
             }
         }
-
-        Log.d("TrackDetailsViewModel", "getTrackDetails trackState is $track")
     }
     suspend fun focusOnPoint(point: LatLng) {
         try {

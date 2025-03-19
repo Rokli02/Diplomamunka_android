@@ -43,6 +43,7 @@ data class CustomColor(
     val disabledBackground: Color,
     val disabled: Color,
     val path: Color,
+    val link: Color,
 )
 
 val LocalCustomColors = staticCompositionLocalOf {
@@ -63,6 +64,7 @@ val LocalCustomColors = staticCompositionLocalOf {
         disabledBackground = Color.Unspecified,
         disabled = Color.Unspecified,
         path = Color.Unspecified,
+        link = Color.Unspecified,
     )
 }
 
@@ -83,6 +85,7 @@ val specifiedCustomColors = CustomColor(
     disabledBackground = Black.copy(alpha = .25f),
     disabled = Black.copy(alpha = .6f),
     path = Blue,
+    link = LightGreen,
 )
 
 val CustomIconButtonColors = IconButtonColors(

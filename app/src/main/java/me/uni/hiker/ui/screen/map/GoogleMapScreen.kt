@@ -1,6 +1,5 @@
 package me.uni.hiker.ui.screen.map
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -47,12 +46,12 @@ fun GoogleMapScreen() {
         onItemClick = { actionType ->
             when (actionType) {
                 ActionType.RECORD_TRACK -> {
-                    mapNavController.popBackStack()
-                    mapNavController.navigate(Screen.RecordTrackMap)
+                    if(!mapNavController.popBackStack(Screen.RecordTrackMap, inclusive = false))
+                        mapNavController.navigate(Screen.RecordTrackMap)
                 }
                 ActionType.VIEW_TRACKS -> {
-                    mapNavController.popBackStack()
-                    mapNavController.navigate(Screen.AllTrackMap)
+                    if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = false))
+                        mapNavController.navigate(Screen.AllTrackMap)
                 }
             }
         }
@@ -93,7 +92,7 @@ fun GoogleMapScreen() {
                         }
 
                         RecordTrackScreen(goBack = {
-                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = true)) {
+                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = false)) {
                                 mapNavController.navigate(route = Screen.AllTrackMap)
                             }
                         })
