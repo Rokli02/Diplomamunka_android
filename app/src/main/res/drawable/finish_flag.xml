@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
+	android:height="24dp"
+	android:viewportWidth="960"
+	android:viewportHeight="960">
+
+	<path
+		android:fillColor="#000"
+		android:fillType="nonZero"
+		android:pathData="M 240,160 H 720 V 560 H 240 Z"/>
+
+    <path
+		android:fillColor="#e3e3e3"
+		android:fillType="nonZero"
+		android:pathData="M 160 160 L 160 800 L 240 800 L 240 480 L 320 480 L 320 400 L 240 400 L 240 320 L 320 320 L 320 240 L 240 240 L 240 160 L 160 160 z M 320 240 L 400 240 L 400 160 L 320 160 L 320 240 z M 400 240 L 400 320 L 480 320 L 480 240 L 400 240 z M 480 240 L 560 240 L 560 160 L 480 160 L 480 240 z M 560 240 L 560 320 L 640 320 L 640 240 L 560 240 z M 640 240 L 720 240 L 720 320 L 640 320 L 640 400 L 720 400 L 720 480 L 640 480 L 640 560 L 720 560 L 720 800 L 800 800 L 800 160 L 720 160 L 640 160 L 640 240 z M 640 480 L 640 400 L 560 400 L 560 480 L 640 480 z M 560 480 L 480 480 L 480 560 L 560 560 L 560 480 z M 480 480 L 480 400 L 400 400 L 400 480 L 480 480 z M 400 480 L 320 480 L 320 560 L 400 560 L 400 480 z M 400 400 L 400 320 L 320 320 L 320 400 L 400 400 z M 480 400 L 560 400 L 560 320 L 480 320 L 480 400 z "
+		android:strokeWidth="8"
+		android:strokeColor="#000"
+        tools:ignore="VectorPath" />
+</vector>

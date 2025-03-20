@@ -12,6 +12,8 @@ import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.dao.TrackDAO
+import me.uni.hiker.utils.encrypter.Hasher
+import me.uni.hiker.utils.encrypter.PBKDF2Hasher
 import javax.inject.Singleton
 
 @Module
@@ -45,5 +47,10 @@ class DependencyInjection () {
     @Provides
     fun provideRecordedLocationDAO(db: HikerDatabase): RecordedLocationDAO {
         return db.recordedLocationDAO()
+    }
+
+    @Provides
+    fun provideHasher(): Hasher {
+        return PBKDF2Hasher()
     }
 }

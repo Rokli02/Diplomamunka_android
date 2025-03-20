@@ -2,22 +2,26 @@ package me.uni.hiker.ui.screen.auth.login
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import me.uni.hiker.R
 import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.model.ErrorChecker
 import me.uni.hiker.model.user.Login
 import me.uni.hiker.model.user.User
+import me.uni.hiker.utils.encrypter.Hasher
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    @ApplicationContext val context: Context,
-    val userDAO: LocalUserDAO,
+    @ApplicationContext private val context: Context,
+    private val userDAO: LocalUserDAO,
+    private val hasher: Hasher,
 ): ViewModel() {
     private val _login = MutableStateFlow(Login("", ""))
     val login = _login.asStateFlow()
@@ -38,9 +42,9 @@ class LoginViewModel @Inject constructor(
                 errorChecker.lengthConstraintsMatch(login.password, "password", min = 8, max = 255) &&
                 areFieldsRight
 
-        if (!areFieldsRight) { return null }
+        println("During login areFieldsRight = $areFieldsRight")
 
-        //TODO: Jelszót titkosítani
+        if (!areFieldsRight) { return null }
 
         // Próbáljon belépni lokálisan
         // Ha sikerült:
@@ -58,9 +62,12 @@ class LoginViewModel @Inject constructor(
         val userFromDb = userDAO.findByEmailOrUsername(login.usernameOrEmail, true)
 
         if (userFromDb != null) {
-            if (userFromDb.password != login.password) {
-                errors["usernameOrEmail"] = "Felhasználónév, vagy jelszó helytelen"
-                errors["password"] = "Felhasználónév, vagy jelszó helytelen"
+            Log.d("LoginViewModel", "userFromDb.password = (${userFromDb.password})")
+            Log.d("LoginViewModel", "login.password = (${login.password})")
+
+            if (!hasher.verify(login.password, userFromDb.password)) {
+                errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
+                errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
 
                 return null
             }
@@ -75,6 +82,9 @@ class LoginViewModel @Inject constructor(
             return loggedInUser
         } else {
             if (!hasNetworkConnection) {
+                errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
+                errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
+
                 return null
             }
 
@@ -82,5 +92,10 @@ class LoginViewModel @Inject constructor(
         }
 
         return null
+    }
+
+    fun clearStates() {
+        errorChecker.clear()
+        _login.update { Login("", "") }
     }
 }

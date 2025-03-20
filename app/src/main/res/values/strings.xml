@@ -37,6 +37,7 @@
     <string name="password">Jelszó</string>
     <string name="no_profile_create_one">Nincs még fiókod? Hozz létre egyet</string>
     <string name="unsuccessful_login">Nem sikerült bejelentkezni</string>
+    <string name="successful_login">Sikeres bejelentkezés</string>
     <string name="field_is_blank">Kötelező mező</string>
     <string name="field_is_too_short">A mező minimum {:VALUE} karakter hosszú kell legyen</string>
     <string name="field_is_too_long">A mező maximum {:VALUE} karakter hosszú lehet</string>
@@ -45,4 +46,5 @@
     <string name="unsuccessful_sign_up">A regisztráció sikertelen</string>
     <string name="unsuccessful_sign_up_username_already_occupied">A felhasználónév már foglalt</string>
     <string name="unsuccessful_sign_up_email_already_occupied">Az email cím már foglalt</string>
+    <string name="username_or_password_is_incorrect">A megadott felhasználónév vagy jelsző helytelen!</string>
 </resources>

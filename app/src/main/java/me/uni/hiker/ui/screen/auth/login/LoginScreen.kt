@@ -11,6 +11,7 @@ import me.uni.hiker.ui.layout.AuthLayout
 import me.uni.hiker.ui.layout.TopBarProps
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.LocalSnackbarContext
+import me.uni.hiker.ui.provider.UserContext
 import me.uni.hiker.ui.screen.Screen
 
 @Composable
@@ -18,6 +19,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val userContext = UserContext
     val navController = LocalNavController
     val snacbarContext = LocalSnackbarContext
     val login by loginViewModel.login.collectAsState()
@@ -29,7 +31,10 @@ fun LoginScreen(
                 message = context.getString(R.string.unsuccessful_login)
             )
         } else {
-            // TODO: Kontextus beállítás
+            snacbarContext.showSnackbar(
+                message = context.getString(R.string.successful_login)
+            )
+            userContext.login(user)
 
             if (!navController.popBackStack(Screen.Home, inclusive = false))
                 navController.navigate(Screen.Home)
@@ -50,6 +55,7 @@ fun LoginScreen(
             onChange = loginViewModel::changeLoginDetails,
             onSubmit = submit,
             onSignUp = {
+                loginViewModel.clearStates()
                 navController.navigate(Screen.SignUp)
             },
             errors = loginViewModel.errors,
