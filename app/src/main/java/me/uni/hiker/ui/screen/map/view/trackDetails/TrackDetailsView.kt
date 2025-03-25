@@ -67,12 +67,14 @@ fun TrackDetailsView(
             )
 
             Marker(
+                title = context.getString(R.string.start),
                 state = startingPointState,
                 anchor = Offset(.5f, 0.8425f),
                 icon = MapUtils.bitmapDescriptorRes(context, R.drawable.flag, Size(96, 96))
             )
 
             Marker(
+                title = context.getString(R.string.finish),
                 state = finishPointState,
                 anchor = Offset(.5f, .5f), // y = .8333f
                 icon = MapUtils.bitmapDescriptorRes(context, R.drawable.finish_flag, Size(96, 96)),

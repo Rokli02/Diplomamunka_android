@@ -34,7 +34,6 @@ import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.entity.RecordedLocation
 import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.screen.map.model.LastLocation
-import me.uni.hiker.ui.screen.map.model.MapViewType
 import java.time.LocalDateTime
 import javax.inject.Inject
 
