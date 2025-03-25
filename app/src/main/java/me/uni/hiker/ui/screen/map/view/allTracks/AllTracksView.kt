@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.DefaultMapUiSettings
 import com.google.maps.android.compose.GoogleMap
@@ -37,6 +36,7 @@ fun AllTracksView(
     cameraPositionState: CameraPositionState,
     focusTrack: (track: Track) -> Unit,
     isCurrentLocationEnabled: Boolean = false,
+    onMapLoaded: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -56,6 +56,7 @@ fun AllTracksView(
             mapToolbarEnabled = false,
             zoomControlsEnabled = true,
         ),
+        onMapLoaded = onMapLoaded,
     ) {
         tracks.run {
             if (isEmpty()) return@run
@@ -63,7 +64,7 @@ fun AllTracksView(
             forEach { track ->
                 when (track) {
                     is Track -> {
-                        AdvancedMarker(
+                        Marker(
                             state = MarkerState(LatLng(track.lat, track.lon)),
                             contentDescription = track.name,
                             title = track.name,

@@ -24,6 +24,7 @@ import me.uni.hiker.exception.InvalidDataException
 import me.uni.hiker.ui.component.Loading
 import me.uni.hiker.ui.provider.LocalSnackbarContext
 import me.uni.hiker.ui.provider.SnackbarAction
+import me.uni.hiker.ui.provider.UserContext
 import me.uni.hiker.ui.screen.map.service.rememberGPSEnabled
 import me.uni.hiker.ui.screen.map.service.rememberLocationPermissionAndRequest
 import me.uni.hiker.ui.theme.AcceptButtonColors
@@ -38,6 +39,7 @@ fun BoxScope.RecordTrackScreen(
 ) {
     val snackbar = LocalSnackbarContext
     val context = LocalContext.current
+    val userContext = UserContext
     val hasLocationPermission = rememberLocationPermissionAndRequest {
         snackbar.showSnackbar(
             message = "${context.getString(R.string.permission_denied)}\n${context.getString(R.string.please_grant_permission)}",
@@ -136,7 +138,7 @@ fun BoxScope.RecordTrackScreen(
             onSave = {
                 coroutineScope.launch {
                     try {
-                        recordTrackViewModel.saveRecordedTrack(it)
+                        recordTrackViewModel.saveRecordedTrack(it, userContext.user?.id)
                         recordTrackViewModel.dropRecordedTrack()
                     } catch(exc: InvalidDataException) {
                         snackbar.showSnackbar(

@@ -35,7 +35,7 @@ fun GoogleMapScreen() {
     var topBarTitle by remember { mutableStateOf(context.getString(R.string.app_name)) }
 
     fun changeTopBarTitle(title: String) {
-        topBarTitle = "${context.getString(R.string.app_name)}-$title"
+        topBarTitle = "${context.getString(R.string.app_name)} - $title"
     }
 
     MapDrawer (
@@ -46,11 +46,11 @@ fun GoogleMapScreen() {
         onItemClick = { actionType ->
             when (actionType) {
                 ActionType.RECORD_TRACK -> {
-                    if(!mapNavController.popBackStack(Screen.RecordTrackMap, inclusive = false))
+                    if(!mapNavController.popBackStack(Screen.RecordTrackMap, inclusive = true))
                         mapNavController.navigate(Screen.RecordTrackMap)
                 }
                 ActionType.VIEW_TRACKS -> {
-                    if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = false))
+                    if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = true))
                         mapNavController.navigate(Screen.AllTrackMap)
                 }
             }
@@ -92,7 +92,7 @@ fun GoogleMapScreen() {
                         }
 
                         RecordTrackScreen(goBack = {
-                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = false)) {
+                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = true)) {
                                 mapNavController.navigate(route = Screen.AllTrackMap)
                             }
                         })
@@ -109,6 +109,7 @@ fun GoogleMapScreen() {
                         TrackDetailsScreen(
                             trackId = tdm.trackId,
                             isRemote = tdm.isRemote,
+                            mapNavController = mapNavController,
                         )
                     }
                 }

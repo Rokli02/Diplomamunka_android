@@ -137,7 +137,7 @@ class RecordTrackViewModel @Inject constructor(
         }
     }
 
-    suspend fun saveRecordedTrack(trackName: String) {
+    suspend fun saveRecordedTrack(trackName: String, userId: Long?) {
         // Get from DB all recordedTracks
         val points = recordedLocationDAO.getAll()
 
@@ -148,7 +148,7 @@ class RecordTrackViewModel @Inject constructor(
         val newTrack = NewTrack.fromRecordedPoints(trackName, points)
 
         // Get saved track's id
-        val trackId = trackDAO.insertOne(newTrack.toEntity(null))
+        val trackId = trackDAO.insertOne(newTrack.toEntity(userId))
 
         // Save RecordedTracks with the id
         pointDAO.insertAll(NewPoint.toEntityList(points, trackId))

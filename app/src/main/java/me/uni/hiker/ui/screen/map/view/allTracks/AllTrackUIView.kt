@@ -37,6 +37,7 @@ fun AllTrackUIView(
     focusedTrack: Track?,
     unfocusTrack: () -> Unit,
     goToDetails: (Track) -> Unit,
+    isLoggedIn: Boolean,
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
 
@@ -93,31 +94,30 @@ fun AllTrackUIView(
                         )
                     }
 
-                    // TODO: Csak akkor jelenjen meg, ha be van jelentkezve a felhasználó
-                    //       Ha van remote Id, akkor "Mentés", ha nincs, akkor "Megosztás"
-                    //       Ha a tiéd a túra, akkor ne jelenjen meg a mentés gomb
-                    if (focusedTrack.remoteId == null) {
-                        Button(
-                            colors = DefaultButtonColors,
-                            onClick = { /*TODO Megosztani a túrát másokkal */ }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.share),
-                                fontSize = 19.sp,
-                                modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
-                            )
-                        }
+                    if (isLoggedIn) {
+                        if (focusedTrack.remoteId == null) {
+                            Button(
+                                colors = DefaultButtonColors,
+                                onClick = { /*TODO Megosztani a túrát másokkal */ }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.share),
+                                    fontSize = 19.sp,
+                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
+                                )
+                            }
 
-                    } else /* if (I'm not the owner)*/ {
-                        Button(
-                            colors = AcceptButtonColors,
-                            onClick = { /*TODO A felhasználónak menteni a túrát */ }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.save),
-                                fontSize = 19.sp,
-                                modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
-                            )
+                        } else if (focusedTrack.id == null) {
+                            Button(
+                                colors = AcceptButtonColors,
+                                onClick = { /*TODO A felhasználónak menteni a túrát */ }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.save),
+                                    fontSize = 19.sp,
+                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
+                                )
+                            }
                         }
                     }
                 }
@@ -142,7 +142,8 @@ private fun AllTrackUIViewPreview() {
                 remoteId = null
             ),
             unfocusTrack = {},
-            goToDetails = {}
+            goToDetails = {},
+            isLoggedIn = true,
         )
     }
 }

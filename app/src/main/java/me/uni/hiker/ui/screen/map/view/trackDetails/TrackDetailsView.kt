@@ -77,6 +77,7 @@ fun TrackDetailsView(
                 title = context.getString(R.string.finish),
                 state = finishPointState,
                 anchor = Offset(.5f, .5f), // y = .8333f
+                infoWindowAnchor = Offset(.5f, -.5f),
                 icon = MapUtils.bitmapDescriptorRes(context, R.drawable.finish_flag, Size(96, 96)),
                 rotation = finishRotation,
             )

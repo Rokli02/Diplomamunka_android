@@ -79,6 +79,8 @@ fun OthersView(
         Column (
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
             if (isLoggedIn) {
                 ProfileMenuItem(user = user!!, logoutUser = logoutUser)
             } else {
@@ -90,7 +92,7 @@ fun OthersView(
             }
 
             HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(.81f),
+                modifier = Modifier.fillMaxWidth(.89f),
                 color = AppTheme.colors.separator
             )
         }

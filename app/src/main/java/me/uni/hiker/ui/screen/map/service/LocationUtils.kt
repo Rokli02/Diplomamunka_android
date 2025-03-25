@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -140,6 +141,27 @@ fun createCurrentLocationFlow(
 
     awaitClose {
         locationProvider.removeLocationUpdates(locationCallback)
+    }
+}
+
+fun currentLocationListener(
+    context: Context,
+    onAction: (Location?) -> Unit
+) {
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) { return }
+
+    LocationServices.getFusedLocationProviderClient(context).getCurrentLocation(
+        Priority.PRIORITY_HIGH_ACCURACY,
+        null
+    ).addOnSuccessListener {
+        onAction(it)
     }
 }
 

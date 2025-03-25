@@ -35,10 +35,10 @@ class TrackDetailsViewModel @Inject constructor(
     suspend fun getRemoteTrackDetails(trackId: Long) {
         TODO("Http kérés a szerver felé")
     }
-    suspend fun getTrackDetails(trackId: Long) {
+    suspend fun getTrackDetails(trackId: Long, userId: Long?) {
         delay(750)
 
-        track = trackDao.findById(id = trackId, userId = null)?.let{ Track.fromEntity(it) }
+        track = trackDao.findById(id = trackId, userId = userId)?.let{ Track.fromEntity(it) }
         if (track != null) {
             points.run {
                 clear()

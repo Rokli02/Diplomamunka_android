@@ -31,19 +31,9 @@ class AllTrackViewModel @Inject constructor(
     val cameraPositionState = CameraPositionState(CameraPosition.fromLatLngZoom(middleOfHungary, 14f))
     private var trackLoadJob: Job? = null
 
-    init {
-        viewModelScope.launch {
-            delay(500)
-
-            cameraPositionState.projection?.also { proj ->
-                loadTracks(proj.visibleRegion.latLngBounds)
-            }
-        }
-    }
-
     fun cancelTrackLoad() { trackLoadJob?.cancel() }
 
-    fun loadTracks(bounds: LatLngBounds) {
+    fun loadTracks(bounds: LatLngBounds, userId: Long?) {
         trackLoadJob?.cancel()
 
         trackLoadJob = viewModelScope.launch {
@@ -56,7 +46,7 @@ class AllTrackViewModel @Inject constructor(
                 maxLat = bounds.northeast.latitude,
                 minLon = bounds.southwest.longitude,
                 maxLon = bounds.northeast.longitude,
-                userId = null
+                userId = userId,
             ).map(Track::fromEntity)
 
             val clusterDistanceThreshold = min(
