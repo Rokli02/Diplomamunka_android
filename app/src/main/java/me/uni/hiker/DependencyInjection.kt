@@ -1,8 +1,6 @@
 package me.uni.hiker
 
 import android.content.Context
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -14,7 +12,6 @@ import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.dao.TrackDAO
-import me.uni.hiker.db.entity.Track
 import me.uni.hiker.utils.encrypter.Hasher
 import me.uni.hiker.utils.encrypter.PBKDF2Hasher
 import javax.inject.Singleton

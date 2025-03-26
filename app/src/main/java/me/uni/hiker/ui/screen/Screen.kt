@@ -21,5 +21,7 @@ sealed class Screen {
 
     companion object {
         const val BASE_URI = "hiker://main_activity"
+        const val TRACK_DETAILS_URI = "${BASE_URI}/map/details?trackId={trackId}&isRemote={isRemote}"
+        const val RECORD_TRACK_URI = "${BASE_URI}/map/record"
     }
 }

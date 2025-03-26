@@ -81,7 +81,7 @@ fun GoogleMapScreen() {
                     composable<Screen.RecordTrackMap>(
                         deepLinks = listOf(
                             navDeepLink {
-                                uriPattern = "${Screen.BASE_URI}/map/record"
+                                uriPattern = Screen.RECORD_TRACK_URI
                             },
                         )
                     ) {
@@ -97,7 +97,13 @@ fun GoogleMapScreen() {
                             }
                         })
                     }
-                    composable<Screen.TrackDetailsMap> { entry ->
+                    composable<Screen.TrackDetailsMap>(
+                        deepLinks = listOf(
+                            navDeepLink {
+                                uriPattern = Screen.TRACK_DETAILS_URI
+                            },
+                        )
+                    ) { entry ->
                         val tdm = entry.toRoute<Screen.TrackDetailsMap>()
 
                         LifecycleStartEffect(Unit) {

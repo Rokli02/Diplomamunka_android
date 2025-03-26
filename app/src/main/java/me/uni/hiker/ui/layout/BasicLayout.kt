@@ -1,12 +1,12 @@
 package me.uni.hiker.ui.layout
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,59 +42,64 @@ fun BasicLayout(
     val snackbarContext = LocalSnackbarContext
     val navController = LocalNavController
 
-    Scaffold(
+    Column (
         modifier = Modifier
             .fillMaxSize()
-            .safeGesturesPadding(),
-        topBar = { TopBar(title = topBarTitle, icons = topBarIcons) },
-        bottomBar = { BottomBar(
-            homeItem = ItemAction(
-                onClick = {
-                    coroutineScope.launch {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Home)
-                    }
-                }
-            ),
-            localItem = ItemAction(
-                onClick = {
-                    coroutineScope.launch {
-                        navController.popBackStack()
-                        navController.navigate(Screen.LocalTrack)
-                    }
-                }
-            ),
-            mapItem = ItemAction(
-                onClick = {
-                    coroutineScope.launch {
-                        navController.navigate(Screen.GoogleMap)
-                    }
-                }
-            ),
-            sharedItem = ItemAction(
-                onClick = {
-                    println("Navigate To [Placeholder]")
-                    snackbarContext.showSnackbar("Navigate To [Placeholder]")
-                }
-            ),
-            settingsItem = ItemAction(
-                onClick = {
-                    coroutineScope.launch {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Others)
-                    }
-                }
-            ),
-        ) },
-    ) { innerPadding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            color = AppTheme.colors.background,
-            contentColor = AppTheme.colors.onBackground,
+            .safeGesturesPadding()
+    ) {
+        TopBar(title = topBarTitle, icons = topBarIcons)
+
+        Box(
+            contentAlignment = Alignment.BottomCenter
         ) {
-            content()
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize(),
+                color = AppTheme.colors.background,
+                contentColor = AppTheme.colors.onBackground,
+            ) {
+                content()
+            }
+
+            BottomBar(
+                homeItem = ItemAction(
+                    onClick = {
+                        coroutineScope.launch {
+                            navController.popBackStack()
+                            navController.navigate(Screen.Home)
+                        }
+                    }
+                ),
+                localItem = ItemAction(
+                    onClick = {
+                        coroutineScope.launch {
+                            navController.popBackStack()
+                            navController.navigate(Screen.LocalTrack)
+                        }
+                    }
+                ),
+                mapItem = ItemAction(
+                    onClick = {
+                        coroutineScope.launch {
+                            navController.navigate(Screen.GoogleMap)
+                        }
+                    }
+                ),
+                sharedItem = ItemAction(
+                    onClick = {
+                        println("Navigate To [Placeholder]")
+                        snackbarContext.showSnackbar("Navigate To [Placeholder]")
+                    }
+                ),
+                settingsItem = ItemAction(
+                    onClick = {
+                        coroutineScope.launch {
+                            navController.popBackStack()
+                            navController.navigate(Screen.Others)
+                        }
+                    }
+                ),
+            )
         }
     }
 }

@@ -32,7 +32,7 @@ val LocalSnackbarContext: SnackbarContext
 
 
 @Composable
-fun SnackbarProvider(modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
+fun SnackbarProvider(content: @Composable (PaddingValues) -> Unit) {
     val state = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val snackbarContext = remember { SnackbarContext(state, coroutineScope) }

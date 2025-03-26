@@ -51,4 +51,5 @@
     <string name="finish">Cél</string>
     <string name="searchbar_label">Keress rá egy helyre…</string>
     <string name="local_tracks">Helyi Túrák</string>
+    <string name="shared_tracks">Megosztott Túrák</string>
 </resources>

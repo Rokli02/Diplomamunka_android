@@ -14,6 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
 
                                 composable<Screen.LocalTrack> {
                                     BasicLayout (
-                                        topBarTitle = TopBarTitle(context.getString(R.string.local_tracks), Icons.Filled.Home),
+                                        topBarTitle = TopBarTitle(context.getString(R.string.local_tracks), Icons.Filled.Place),
                                     ) {
                                         LocalTrackScreen()
                                     }
@@ -161,7 +162,10 @@ class MainActivity : ComponentActivity() {
                                     exitTransition = { slideOutVertically { -it } },
                                     deepLinks = listOf(
                                         navDeepLink {
-                                            uriPattern = "${Screen.BASE_URI}/map/record"
+                                            uriPattern = Screen.RECORD_TRACK_URI
+                                        },
+                                        navDeepLink {
+                                            uriPattern = Screen.TRACK_DETAILS_URI
                                         },
                                     )
                                 ) {
