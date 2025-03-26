@@ -1,7 +1,11 @@
 package me.uni.hiker.ui.provider
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -13,8 +17,11 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private val LocalSnackbarState: ProvidableCompositionLocal<SnackbarContext?> = staticCompositionLocalOf { null }
@@ -28,16 +35,18 @@ val LocalSnackbarContext: SnackbarContext
 fun SnackbarProvider(modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
     val state = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val snackbarContext = remember { SnackbarContext(state, coroutineScope) }
 
-    Scaffold (
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = state) },
-        content = {
-            CompositionLocalProvider(LocalSnackbarState provides SnackbarContext(state, coroutineScope)) {
-                content(it)
-            }
-        },
-    )
+    CompositionLocalProvider(LocalSnackbarState provides snackbarContext) {
+        content(PaddingValues())
+    }
+
+    Box(modifier = Modifier.fillMaxSize().safeDrawingPadding().safeContentPadding()) {
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.BottomCenter).offset(y = -(24.dp)),
+            hostState = state,
+        )
+    }
 }
 
 @Immutable
@@ -45,13 +54,17 @@ data class SnackbarContext(
     private val state: SnackbarHostState,
     private val coroutineScope: CoroutineScope,
 ) {
+    private var showJob: Job? = null
+
     fun showSnackbar(
         message: String,
         duration: SnackbarDuration = SnackbarDuration.Short,
         action: SnackbarAction? = null,
         dismissAction: (() -> Unit)? = {},
     ) {
-        coroutineScope.launch {
+        showJob?.cancel()
+
+        showJob = coroutineScope.launch {
             state.showSnackbar(
                 message = message,
                 duration = duration,
@@ -66,6 +79,8 @@ data class SnackbarContext(
                         dismissAction?.invoke()
                     }
                 }
+
+                showJob = null
             }
         }
     }

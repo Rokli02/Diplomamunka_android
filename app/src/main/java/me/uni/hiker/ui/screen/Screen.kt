@@ -7,7 +7,6 @@ sealed class Screen {
     @Serializable data object Home : Screen()
     @Serializable data object Others: Screen()
     @Serializable data object LocalTrack: Screen()
-    @Serializable data object MainMap: Screen()
 
     // Auth Screens
     @Serializable data object Auth: Screen()
@@ -15,6 +14,7 @@ sealed class Screen {
     @Serializable data object SignUp : Screen()
 
     // Map Screens
+    @Serializable data object GoogleMap: Screen()
     @Serializable data object AllTrackMap: Screen()
     @Serializable data object RecordTrackMap: Screen()
     @Serializable data class TrackDetailsMap(val trackId: Long, val isRemote: Boolean = false): Screen()

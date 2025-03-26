@@ -18,7 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,21 +28,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import me.uni.hiker.R
-import me.uni.hiker.ui.provider.LocalNavController
-import me.uni.hiker.ui.provider.LocalSnackbarContext
-import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.CustomIconButtonColors
 import me.uni.hiker.ui.theme.HikeRTheme
 
 @Composable
-fun BottomBar() {
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarContext = LocalSnackbarContext
-    val navController = LocalNavController
-
+fun BottomBar(
+    homeItem: ItemAction,
+    localItem: ItemAction,
+    mapItem: ItemAction,
+    sharedItem: ItemAction,
+    settingsItem: ItemAction,
+) {
     Surface (
         modifier = Modifier
             .fillMaxWidth()
@@ -59,46 +57,30 @@ fun BottomBar() {
             BottomBarItem(
                 imageVector = Icons.Default.Home,
                 text = stringResource(id = R.string.home_page),
-            ) {
-                coroutineScope.launch {
-                    navController.popBackStack()
-                    navController.navigate(Screen.Home)
-                }
-            }
+                onClick = homeItem.onClick
+            )
 
             BottomBarItem(
                 imageVector = Icons.Default.Place,
                 text = stringResource(id = R.string.local_tracks),
-            ) {
-                coroutineScope.launch {
-                    navController.popBackStack()
-                    navController.navigate(Screen.LocalTrack)
-                }
-            }
+                onClick = localItem.onClick
+            )
 
-            BottomBarMapItem {
-                coroutineScope.launch {
-                    navController.navigate(Screen.MainMap)
-                }
-            }
+            BottomBarMapItem(
+                onClick = mapItem.onClick
+            )
 
             BottomBarItem(
                 imageVector = Icons.Default.Clear,
-                text = "[Placeholder]"
-            ) {
-                println("Navigate To [Placeholder]")
-                snackbarContext.showSnackbar("Navigate To [Placeholder]")
-            }
+                text = "[Placeholder]",
+                onClick = sharedItem.onClick
+            ) 
 
             BottomBarItem(
                 imageVector = Icons.Default.Settings,
                 text = stringResource(id = R.string.settings_page),
-            ) {
-                coroutineScope.launch {
-                    navController.popBackStack()
-                    navController.navigate(Screen.Others)
-                }
-            }
+                onClick = settingsItem.onClick
+            )
         }
     }
 }
@@ -169,7 +151,20 @@ private fun BottomBarMapItem(onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun BottomBarPreview() {
+    val mockItemAction = ItemAction(
+        onClick = {}
+    )
+
     HikeRTheme {
-        BottomBar()
+        BottomBar(
+            homeItem = mockItemAction,
+            localItem = mockItemAction,
+            mapItem = mockItemAction,
+            sharedItem = mockItemAction,
+            settingsItem = mockItemAction,
+        )
     }
 }
+
+@Immutable
+data class ItemAction(val onClick: () -> Unit)

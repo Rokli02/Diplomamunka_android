@@ -4,11 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.uni.hiker.R
-import me.uni.hiker.ui.layout.AuthLayout
-import me.uni.hiker.ui.layout.TopBarProps
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.LocalSnackbarContext
 import me.uni.hiker.ui.provider.UserContext
@@ -42,23 +39,15 @@ fun LoginScreen(
 
     }
 
-    AuthLayout(
-        topBarProps = TopBarProps(
-            title = stringResource(id = R.string.login),
-            goBack = {
-                navController.popBackStack()
-            }
-        )
-    ) {
-        LoginView(
-            login = login,
-            onChange = loginViewModel::changeLoginDetails,
-            onSubmit = submit,
-            onSignUp = {
-                loginViewModel.clearStates()
-                navController.navigate(Screen.SignUp)
-            },
-            errors = loginViewModel.errors,
-        )
-    }
+
+    LoginView(
+        login = login,
+        onChange = loginViewModel::changeLoginDetails,
+        onSubmit = submit,
+        onSignUp = {
+            loginViewModel.clearStates()
+            navController.navigate(Screen.SignUp)
+        },
+        errors = loginViewModel.errors,
+    )
 }

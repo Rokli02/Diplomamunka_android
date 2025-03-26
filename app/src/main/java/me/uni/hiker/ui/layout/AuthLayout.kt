@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -39,7 +39,7 @@ fun AuthLayout(
     Scaffold (
         modifier = Modifier
             .fillMaxSize()
-            .safeDrawingPadding(),
+            .safeGesturesPadding(),
         topBar = { TopBar(topBarProps) }
     ) { innerPadding ->
         Surface(

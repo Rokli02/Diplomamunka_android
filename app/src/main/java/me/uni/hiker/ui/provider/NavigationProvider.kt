@@ -11,7 +11,7 @@ private val LocalNavHostController: ProvidableCompositionLocal<NavHostController
 
 val LocalNavController: NavHostController
     @Composable
-    get() = if (LocalNavHostController.current == null) throw Error("NavHostController has not been initialized in this scope") else LocalNavHostController.current!!
+    get() = LocalNavHostController.current ?: throw Error("NavHostController has not been initialized in this scope")
 
 @Composable
 fun NavigationProvider(content: @Composable () -> Unit) {

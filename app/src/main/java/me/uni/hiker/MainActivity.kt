@@ -11,12 +11,22 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import dagger.hilt.android.AndroidEntryPoint
+import me.uni.hiker.ui.layout.AuthLayout
+import me.uni.hiker.ui.layout.BasicLayout
+import me.uni.hiker.ui.layout.TopBarProps
+import me.uni.hiker.ui.layout.component.TopBarIcon
+import me.uni.hiker.ui.layout.component.TopBarTitle
 import me.uni.hiker.ui.provider.NavigationProvider
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.provider.SnackbarProvider
@@ -48,6 +58,8 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(BoneWhite.toArgb(), Black.toArgb())
         )
 
+        val context = this
+
         userSharedPreferences = getUserSharedPreferences()
 
         val usvm by viewModels<UserSessionViewModel>()
@@ -60,9 +72,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HikeRTheme {
-                NavigationProvider {
-                    UserSessionProvider(userSessionViewModel = userSessionViewModel) {
-                        SnackbarProvider {
+                SnackbarProvider {
+                    NavigationProvider {
+                        UserSessionProvider(userSessionViewModel = userSessionViewModel) {
                             NavHost(
                                 navController = LocalNavController,
                                 startDestination = Screen.Home,
@@ -73,25 +85,78 @@ class MainActivity : ComponentActivity() {
                                     startDestination = Screen.Login,
                                 ) {
                                     composable<Screen.Login> {
-                                        LoginScreen()
+                                        val navController = LocalNavController
+
+                                        AuthLayout(
+                                            topBarProps = TopBarProps(
+                                                title = context.getString(R.string.login),
+                                                goBack = {
+                                                    navController.popBackStack()
+                                                }
+                                            )
+                                        ) {
+                                            LoginScreen()
+                                        }
                                     }
+
                                     composable<Screen.SignUp> {
-                                        SignUpScreen()
+                                        val navController = LocalNavController
+
+                                        AuthLayout(
+                                            topBarProps = TopBarProps(
+                                                title = context.getString(R.string.signup),
+                                                goBack = {
+                                                    navController.popBackStack()
+                                                }
+                                            )
+                                        ) {
+                                            SignUpScreen()
+                                        }
                                     }
                                 }
-
-                                //TODO("A Main screeneknek bevezetni egy NavHost-ot, ami egységesen használja a BasicLayout-ot")
 
                                 composable<Screen.Home> {
-                                    HomeScreen()
+                                    BasicLayout (
+                                        topBarTitle = TopBarTitle(context.getString(R.string.home_page), Icons.Filled.Home),
+                                    ) {
+                                        HomeScreen()
+                                    }
                                 }
+
                                 composable<Screen.Others> {
-                                    OthersScreen()
+                                    val topBarIcons = remember (userSessionViewModel.isLoggedIn) {
+                                        val result = mutableListOf<TopBarIcon>()
+
+                                        if (userSessionViewModel.isLoggedIn) {
+                                            result.add(
+                                                TopBarIcon(
+                                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                                    description = context.getString(R.string.logout),
+                                                    onClick = userSessionViewModel::logout,
+                                                )
+                                            )
+                                        }
+
+                                        result
+                                    }
+
+                                    BasicLayout (
+                                        topBarTitle = TopBarTitle(context.getString(R.string.settings_page), imageVector = Icons.Default.Settings),
+                                        topBarIcons = topBarIcons
+                                    ) {
+                                        OthersScreen()
+                                    }
                                 }
+
                                 composable<Screen.LocalTrack> {
-                                    LocalTrackScreen()
+                                    BasicLayout (
+                                        topBarTitle = TopBarTitle(context.getString(R.string.local_tracks), Icons.Filled.Home),
+                                    ) {
+                                        LocalTrackScreen()
+                                    }
                                 }
-                                composable<Screen.MainMap>(
+
+                                composable<Screen.GoogleMap>(
                                     enterTransition = { slideInVertically { -it } },
                                     exitTransition = { slideOutVertically { -it } },
                                     deepLinks = listOf(
