@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import me.uni.hiker.R
 import me.uni.hiker.model.user.NewUser
 import me.uni.hiker.ui.component.CustomInput
+import me.uni.hiker.ui.component.Searchbar
 import me.uni.hiker.ui.component.CustomPasswordInput
 import me.uni.hiker.ui.theme.AcceptButtonColors
 import me.uni.hiker.ui.theme.AppTheme

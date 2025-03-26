@@ -6,6 +6,7 @@ sealed class Screen {
     // Main Screens
     @Serializable data object Home : Screen()
     @Serializable data object Others: Screen()
+    @Serializable data object LocalTrack: Screen()
     @Serializable data object MainMap: Screen()
 
     // Auth Screens

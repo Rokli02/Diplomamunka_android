@@ -25,6 +25,7 @@ import me.uni.hiker.ui.screen.Screen
 import me.uni.hiker.ui.screen.auth.login.LoginScreen
 import me.uni.hiker.ui.screen.auth.signup.SignUpScreen
 import me.uni.hiker.ui.screen.main.home.HomeScreen
+import me.uni.hiker.ui.screen.main.localtrack.LocalTrackScreen
 import me.uni.hiker.ui.screen.main.others.OthersScreen
 import me.uni.hiker.ui.screen.map.GoogleMapScreen
 import me.uni.hiker.ui.theme.Black
@@ -60,8 +61,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             HikeRTheme {
                 NavigationProvider {
-                    SnackbarProvider {
-                        UserSessionProvider(userSessionViewModel = userSessionViewModel) {
+                    UserSessionProvider(userSessionViewModel = userSessionViewModel) {
+                        SnackbarProvider {
                             NavHost(
                                 navController = LocalNavController,
                                 startDestination = Screen.Home,
@@ -79,11 +80,16 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
+                                //TODO("A Main screeneknek bevezetni egy NavHost-ot, ami egységesen használja a BasicLayout-ot")
+
                                 composable<Screen.Home> {
                                     HomeScreen()
                                 }
                                 composable<Screen.Others> {
                                     OthersScreen()
+                                }
+                                composable<Screen.LocalTrack> {
+                                    LocalTrackScreen()
                                 }
                                 composable<Screen.MainMap>(
                                     enterTransition = { slideInVertically { -it } },

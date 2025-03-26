@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,7 @@ import me.uni.hiker.ui.theme.HikeRTheme
 fun BottomBar() {
     val coroutineScope = rememberCoroutineScope()
     val snackbarContext = LocalSnackbarContext
+    val navController = LocalNavController
 
     Surface (
         modifier = Modifier
@@ -54,8 +56,6 @@ fun BottomBar() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top
         ) {
-            val navController = LocalNavController
-
             BottomBarItem(
                 imageVector = Icons.Default.Home,
                 text = stringResource(id = R.string.home_page),
@@ -67,11 +67,13 @@ fun BottomBar() {
             }
 
             BottomBarItem(
-                imageVector = Icons.Default.Clear,
-                text = "[Placeholder]",
+                imageVector = Icons.Default.Place,
+                text = stringResource(id = R.string.local_tracks),
             ) {
-                println("Navigate To [Placeholder]")
-                snackbarContext.showSnackbar("Navigate To [Placeholder]")
+                coroutineScope.launch {
+                    navController.popBackStack()
+                    navController.navigate(Screen.LocalTrack)
+                }
             }
 
             BottomBarMapItem {

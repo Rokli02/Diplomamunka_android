@@ -85,6 +85,7 @@ fun OthersView(
                 ProfileMenuItem(user = user!!, logoutUser = logoutUser)
             } else {
                 MenuItem(
+                    modifier = Modifier.padding(bottom = 6.dp),
                     icon = Icons.Default.AccountCircle,
                     text = context.getString(R.string.login),
                     onClick = loginUser
@@ -92,7 +93,6 @@ fun OthersView(
             }
 
             HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(.89f),
                 color = AppTheme.colors.separator
             )
         }
@@ -115,7 +115,7 @@ private fun OthersViewPreview() {
         SnackbarProvider{
             NavigationProvider {
                 OthersView(
-                    isLoggedIn = true,
+                    isLoggedIn = false,
                     user = user,
                     loginUser = {},
                     logoutUser = {},

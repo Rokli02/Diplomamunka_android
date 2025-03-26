@@ -49,4 +49,6 @@
     <string name="username_or_password_is_incorrect">A megadott felhasználónév vagy jelsző helytelen!</string>
     <string name="start">Start</string>
     <string name="finish">Cél</string>
+    <string name="searchbar_label">Keress rá egy helyre…</string>
+    <string name="local_tracks">Helyi Túrák</string>
 </resources>
