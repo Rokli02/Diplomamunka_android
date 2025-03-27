@@ -52,4 +52,8 @@
     <string name="searchbar_label">Keress rá egy helyre…</string>
     <string name="local_tracks">Helyi Túrák</string>
     <string name="shared_tracks">Megosztott Túrák</string>
+    <string name="welcome_prefix">Üdvözöllek</string>
+    <string name="welcome_suffix">Túrázz egyet a természetben!</string>
+    <string name="login_for_better_experience">Jelentkezz be, hogy megtapasztalhasd a teljes felhasználói élményt!</string>
+    <string name="more">Továbbiak</string>
 </resources>

@@ -15,12 +15,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -81,7 +83,7 @@ private fun OthersViewPreview() {
 
     HikeRTheme {
         OthersView(
-            isLoggedIn = false,
+            isLoggedIn = true,
             user = user,
             loginUser = {},
             logoutUser = {},
@@ -145,6 +147,12 @@ fun ProfileMenuItem(
                 disabledContentColor = specifiedCustomColors.disabled,
             )
         ) {
+            Icon(
+                modifier = Modifier.padding(end = 4.dp),
+                painter = painterResource(id = R.drawable.logout),
+                contentDescription = "logout",
+            )
+
             Text(
                 text = context.getString(R.string.logout),
                 maxLines = 1,

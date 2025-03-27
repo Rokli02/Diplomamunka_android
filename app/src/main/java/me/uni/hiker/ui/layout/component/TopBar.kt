@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -90,11 +91,19 @@ fun TopBar(
                             enabled = icon.enabled,
                             colors = CustomIconButtonColors
                         ) {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                imageVector = icon.imageVector,
-                                contentDescription = icon.description
-                            )
+                            if (icon.imageVector != null) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    imageVector = icon.imageVector,
+                                    contentDescription = icon.description
+                                )
+                            } else if (icon.painter != null) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = icon.painter,
+                                    contentDescription = icon.description
+                                )
+                            }
                         }
                     }
                 }
@@ -127,7 +136,8 @@ private fun TopBarPreview() {
 
 @Immutable
 data class TopBarIcon (
-    val imageVector: ImageVector,
+    val imageVector: ImageVector? = null,
+    val painter: Painter? = null,
     val description: String,
     val onClick: () -> Unit,
     val enabled: Boolean = true,

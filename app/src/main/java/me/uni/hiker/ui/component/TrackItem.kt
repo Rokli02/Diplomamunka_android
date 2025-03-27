@@ -31,7 +31,7 @@ import java.time.LocalDate
 fun TrackItem(
     modifier: Modifier = Modifier,
     track: Track,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
     Box(modifier = modifier.height(72.dp).clickable(onClick = onClick)) {
         Row (

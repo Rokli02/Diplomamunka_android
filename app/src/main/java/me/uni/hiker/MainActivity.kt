@@ -12,12 +12,12 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -125,13 +125,14 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 composable<Screen.Others> {
+                                    val logoutPainter = painterResource(id = R.drawable.logout)
                                     val topBarIcons = remember (userSessionViewModel.isLoggedIn) {
                                         val result = mutableListOf<TopBarIcon>()
 
                                         if (userSessionViewModel.isLoggedIn) {
                                             result.add(
                                                 TopBarIcon(
-                                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                                    painter = logoutPainter,
                                                     description = context.getString(R.string.logout),
                                                     onClick = userSessionViewModel::logout,
                                                 )
