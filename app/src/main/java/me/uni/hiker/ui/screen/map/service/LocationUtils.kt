@@ -275,5 +275,5 @@ fun clusterTracks(tracks: List<Track>, clusterDistanceThreshold: Double): List<A
 }
 
 private fun distanceOfPoints(point1: AbstractTrack, point2: AbstractTrack): Double {
-    return sqrt((point2.lat - point1.lat).pow(2) - (point2.lon - point1.lon).pow(2))
+    return sqrt((point2.lat - point1.lat).pow(2) + (point2.lon - point1.lon).pow(2))
 }

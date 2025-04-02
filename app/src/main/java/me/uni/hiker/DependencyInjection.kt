@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DependencyInjection () {
+class DependencyInjection {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): HikerDatabase {

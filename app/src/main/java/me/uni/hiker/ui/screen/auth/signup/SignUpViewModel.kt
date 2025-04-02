@@ -45,6 +45,7 @@ class SignUpViewModel @Inject constructor(
                 areFieldsRight
 
         areFieldsRight = !errorChecker.isFieldBlank(newUser.password, "password") &&
+                errorChecker.lengthConstraintsMatch(newUser.password, "password", min = 8, max = 255) &&
                 areFieldsRight
 
         if (!areFieldsRight) { return context.getString(R.string.unsuccessful_sign_up) }
