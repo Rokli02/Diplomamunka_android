@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
@@ -38,6 +39,7 @@ import me.uni.hiker.ui.screen.auth.signup.SignUpScreen
 import me.uni.hiker.ui.screen.main.home.HomeScreen
 import me.uni.hiker.ui.screen.main.localtrack.LocalTrackScreen
 import me.uni.hiker.ui.screen.main.others.OthersScreen
+import me.uni.hiker.ui.screen.main.sharedtrack.SharedTrackScreen
 import me.uni.hiker.ui.screen.map.GoogleMapScreen
 import me.uni.hiker.ui.theme.Black
 import me.uni.hiker.ui.theme.BoneWhite
@@ -155,6 +157,14 @@ class MainActivity : ComponentActivity() {
                                         topBarTitle = TopBarTitle(context.getString(R.string.local_tracks), Icons.Filled.Place),
                                     ) {
                                         LocalTrackScreen()
+                                    }
+                                }
+
+                                composable<Screen.SharedTrack> {
+                                    BasicLayout (
+                                        topBarTitle = TopBarTitle(context.getString(R.string.shared_tracks), Icons.Default.Share),
+                                    ) {
+                                        SharedTrackScreen()
                                     }
                                 }
 

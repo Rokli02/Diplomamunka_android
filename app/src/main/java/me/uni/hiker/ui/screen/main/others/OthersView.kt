@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -18,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,8 +47,17 @@ fun OthersView(
     user: User?,
     logoutUser: () -> Unit,
     loginUser: () -> Unit,
+    isServerAvailable: Boolean,
 ) {
     val context = LocalContext.current
+
+    val serverStatusItem = remember(isServerAvailable) {
+        if (isServerAvailable) {
+            ServerStatusItem(Icons.Default.Done, context.getString(R.string.server_online))
+        } else {
+            ServerStatusItem(Icons.Default.Close, context.getString(R.string.server_offline))
+        }
+    }
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
@@ -62,6 +74,11 @@ fun OthersView(
                 onClick = loginUser
             )
         }
+
+        MenuItem(
+            icon = serverStatusItem.icon,
+            text = serverStatusItem.text,
+        )
 
         HorizontalDivider(
             color = AppTheme.colors.separator
@@ -87,6 +104,7 @@ private fun OthersViewPreview() {
             user = user,
             loginUser = {},
             logoutUser = {},
+            isServerAvailable = true,
         )
     }
 }
@@ -163,3 +181,5 @@ fun ProfileMenuItem(
         Spacer(modifier = Modifier.width(4.dp))
     }
 }
+
+private data class ServerStatusItem(val icon: Any?, val text: String)

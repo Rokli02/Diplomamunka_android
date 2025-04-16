@@ -24,7 +24,7 @@ fun MenuItem(
     modifier: Modifier = Modifier,
     text: String,
     icon: Any? = null,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     Row (
         modifier = modifier
@@ -59,6 +59,6 @@ private fun OthersItemPreview() {
     HikeRTheme {
         MenuItem(
             text = "Menu Item Preview, but it is too long to display everything",
-        ) {}
+        )
     }
 }

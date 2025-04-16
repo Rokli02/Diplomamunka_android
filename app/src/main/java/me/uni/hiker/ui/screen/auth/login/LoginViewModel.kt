@@ -14,6 +14,7 @@ import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.model.ErrorChecker
 import me.uni.hiker.model.user.Login
 import me.uni.hiker.model.user.User
+import me.uni.hiker.service.ConnectionService
 import me.uni.hiker.utils.encrypter.Hasher
 import javax.inject.Inject
 
@@ -58,7 +59,7 @@ class LoginViewModel @Inject constructor(
         //        Ha van internet, de nincs ilyen fiók, sikertelen
         //        Ha van internet és van fiók, akkor kérje le a fiók adatait és regisztrálja be lokálisan
 
-        val hasNetworkConnection = (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?)?.activeNetwork != null
+        val hasNetworkConnection = ConnectionService.hasConnection(context)
         val userFromDb = userDAO.findByEmailOrUsername(login.usernameOrEmail, true)
 
         if (userFromDb != null) {

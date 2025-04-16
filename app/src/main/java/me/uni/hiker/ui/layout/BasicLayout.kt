@@ -25,7 +25,6 @@ import me.uni.hiker.ui.layout.component.TopBar
 import me.uni.hiker.ui.layout.component.TopBarIcon
 import me.uni.hiker.ui.layout.component.TopBarTitle
 import me.uni.hiker.ui.provider.LocalNavController
-import me.uni.hiker.ui.provider.LocalSnackbarContext
 import me.uni.hiker.ui.provider.NavigationProvider
 import me.uni.hiker.ui.provider.SnackbarProvider
 import me.uni.hiker.ui.screen.Screen
@@ -39,7 +38,6 @@ fun BasicLayout(
     content: @Composable () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val snackbarContext = LocalSnackbarContext
     val navController = LocalNavController
 
     Column (
@@ -87,8 +85,10 @@ fun BasicLayout(
                 ),
                 sharedItem = ItemAction(
                     onClick = {
-                        println("Navigate To [Placeholder]")
-                        snackbarContext.showSnackbar("Navigate To [Placeholder]")
+                        coroutineScope.launch {
+                            navController.popBackStack()
+                            navController.navigate(Screen.SharedTrack)
+                        }
                     }
                 ),
                 settingsItem = ItemAction(

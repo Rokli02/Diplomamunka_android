@@ -56,4 +56,6 @@
     <string name="welcome_suffix">Túrázz egyet a természetben!</string>
     <string name="login_for_better_experience">Jelentkezz be, hogy megtapasztalhasd a teljes felhasználói élményt!</string>
     <string name="more">Továbbiak</string>
+    <string name="server_online">Szerver elérhető</string>
+    <string name="server_offline">Szerver üzemen kívül</string>
 </resources>

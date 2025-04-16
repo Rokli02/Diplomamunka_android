@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -142,11 +143,40 @@ fun LocalTracksSurface(
 ) {
     val context = LocalContext.current
 
-    Box(modifier = Modifier
+    PreviewSurface {
+        for ((i, track) in localTracks.withIndex()) {
+            TrackItem(track = track)
+
+            if (localTracks.size - 1 != i) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 9.dp),
+                    color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
+                )
+            }
+        }
+
+        Text(
+            modifier = Modifier
+                .clip(shape = RoundedCornerShape(6.dp))
+                .clickable(onClick = navigateToLocalTrack)
+                .padding(horizontal = 8.dp, vertical = 3.dp),
+            text = context.getString(R.string.more),
+            color = AppTheme.colors.link,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.W500,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+fun PreviewSurface(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Box(modifier = modifier
         .padding(vertical = 12.dp)
         .fillMaxWidth(.96f)
         .shadow(elevation = 2.dp, shape = RoundedCornerShape(6.dp))) {
-        Column (
+        Column(
             modifier = Modifier
                 .padding(1.dp)
                 .background(AppTheme.colors.background, RoundedCornerShape(6.dp)),
@@ -154,29 +184,7 @@ fun LocalTracksSurface(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            for ((i, track) in localTracks.withIndex()) {
-                TrackItem(track = track)
-
-                if (localTracks.size - 1 != i) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 9.dp),
-                        color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
-                    )
-                }
-            }
-
-            Text(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(6.dp))
-                    .clickable(onClick = navigateToLocalTrack)
-                    .padding(horizontal = 8.dp, vertical = 3.dp),
-                text = context.getString(R.string.more),
-                color = AppTheme.colors.link,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W500,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            content()
 
             Spacer(modifier = Modifier.height(12.dp))
         }

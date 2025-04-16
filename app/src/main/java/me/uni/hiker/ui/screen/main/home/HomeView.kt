@@ -2,6 +2,7 @@ package me.uni.hiker.ui.screen.main.home
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.model.user.User
+import me.uni.hiker.ui.component.Skeleton
 import me.uni.hiker.ui.theme.HikeRTheme
 import java.time.LocalDate
 
@@ -44,7 +46,17 @@ fun HomeView(
 
         // x Random telefonon tárolt túra
         if (localTracks == null) {
-            //TODO("Skeleton itemek")
+            item {
+                PreviewSurface {
+                    for (i in 1..ELEMENTS_TO_LOAD) {
+                        Skeleton(modifier = Modifier.height(72.dp))
+
+                        Spacer(modifier = Modifier.height(6.dp))
+                    }
+
+                    Skeleton(modifier = Modifier.height(24.dp).fillMaxWidth(.5f).align(Alignment.CenterHorizontally))
+                }
+            }
         } else {
             item {
                 LocalTracksSurface(
