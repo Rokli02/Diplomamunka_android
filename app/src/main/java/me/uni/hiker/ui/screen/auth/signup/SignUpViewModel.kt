@@ -1,7 +1,6 @@
 package me.uni.hiker.ui.screen.auth.signup
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -9,17 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import me.uni.hiker.R
-import me.uni.hiker.db.dao.LocalUserDAO
+import me.uni.hiker.api.model.RemoteUser
 import me.uni.hiker.model.ErrorChecker
 import me.uni.hiker.model.user.NewUser
-import me.uni.hiker.utils.encrypter.Hasher
+import me.uni.hiker.service.ConnectionService
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val userDAO: LocalUserDAO,
-    private val hasher: Hasher,
+    private val signUpUseCases: SignUpUseCases,
 ): ViewModel() {
     private val _newUser = MutableStateFlow(NewUser("", "", "", ""))
     val newUser = _newUser.asStateFlow()
@@ -35,47 +33,28 @@ class SignUpViewModel @Inject constructor(
         val newUser = newUser.value
 
         // Check if fields are right
-        var areFieldsRight = !errorChecker.isFieldBlank(newUser.name, "name")
+        if (!signUpUseCases.validateFields(newUser, errorChecker)) { return context.getString(R.string.unsuccessful_sign_up) }
 
-        areFieldsRight = !errorChecker.isFieldBlank(newUser.username, "username") &&
-                areFieldsRight
-
-        areFieldsRight = !errorChecker.isFieldBlank(newUser.email, "email") &&
-                errorChecker.isValidEmail(newUser.email, "email") &&
-                areFieldsRight
-
-        areFieldsRight = !errorChecker.isFieldBlank(newUser.password, "password") &&
-                errorChecker.lengthConstraintsMatch(newUser.password, "password", min = 8, max = 255) &&
-                areFieldsRight
-
-        if (!areFieldsRight) { return context.getString(R.string.unsuccessful_sign_up) }
-        // TODO: Try to create new user on the server
-        //       Wait for ack
-
-        // Try to create new user locally
-        val userFromDb = userDAO.isExistsByEmailOrUsername(newUser.email, newUser.username)
-
-        if (userFromDb != null) {
-            if (userFromDb.username == newUser.username) {
-                errors["username"] = context.getString(R.string.unsuccessful_sign_up_username_already_occupied)
-                return context.getString(R.string.unsuccessful_sign_up_username_already_occupied)
-            }
-
-            if (userFromDb.email == newUser.email) {
-                errors["email"] = context.getString(R.string.unsuccessful_sign_up_email_already_occupied)
-                return context.getString(R.string.unsuccessful_sign_up_email_already_occupied)
-            }
-
-            return context.getString(R.string.unsuccessful_sign_up)
+        var remoteUser: RemoteUser? = null
+        if (ConnectionService.hasConnection(context)) {
+            remoteUser = signUpUseCases.createUserOnServer(newUser)
         }
 
-        val hashedPassword = hasher.hash(newUser.password) ?: return null
-        Log.d("SignUpViewModel", "newUser.password = (${newUser.password})")
-        Log.d("SignUpViewModel", "hashedPassword = (${hashedPassword})")
-        userDAO.insertOne(newUser.copy(
-            password = hashedPassword,
-        ).toEntity())
+        // Try to create new user locally
+        val signUpError = signUpUseCases.createUserOnDevice(newUser, remoteUser)
+        when (signUpError) {
+            null -> return null
+            SignUpError.EMAIL_ALREADY_USED -> {
+                errors["email"] = context.getString(R.string.unsuccessful_sign_up_email_already_occupied)
 
-        return null
+                return context.getString(R.string.unsuccessful_sign_up_email_already_occupied)
+            }
+            SignUpError.USERNAME_ALREADY_USED -> {
+                errors["username"] = context.getString(R.string.unsuccessful_sign_up_username_already_occupied)
+
+                return context.getString(R.string.unsuccessful_sign_up_username_already_occupied)
+            }
+            else -> return context.getString(R.string.unsuccessful_sign_up)
+        }
     }
 }

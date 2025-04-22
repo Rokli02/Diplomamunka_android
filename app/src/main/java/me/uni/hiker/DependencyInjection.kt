@@ -16,6 +16,7 @@ import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.dao.TrackDAO
 import me.uni.hiker.ui.screen.auth.login.LoginUseCases
+import me.uni.hiker.ui.screen.auth.signup.SignUpUseCases
 import me.uni.hiker.utils.encrypter.Hasher
 import me.uni.hiker.utils.encrypter.PBKDF2Hasher
 import retrofit2.Retrofit
@@ -92,5 +93,15 @@ class DependencyInjection {
         hasher: Hasher,
     ): LoginUseCases {
         return LoginUseCases(userDAO, userService, hasher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSignUpUseCases(
+        userDAO: LocalUserDAO,
+        userService: UserService,
+        hasher: Hasher,
+    ): SignUpUseCases {
+        return SignUpUseCases(userDAO, userService, hasher)
     }
 }

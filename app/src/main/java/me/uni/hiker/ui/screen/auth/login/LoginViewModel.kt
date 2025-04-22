@@ -33,13 +33,7 @@ class LoginViewModel @Inject constructor(
         val login = login.value.copy()
 
         // Check validity of fields
-        var areFieldsRight = !errorChecker.isFieldBlank(login.usernameOrEmail, "usernameOrEmail")
-
-        areFieldsRight = !errorChecker.isFieldBlank(login.password, "password") &&
-                errorChecker.lengthConstraintsMatch(login.password, "password", min = 8, max = 255) &&
-                areFieldsRight
-
-        if (!areFieldsRight) { return null }
+        if (!loginUseCases.validateField(login, errorChecker)) { return null }
 
         // Check for local user
         val (localUser, localError) = loginUseCases.loginLocally(login)
@@ -48,7 +42,6 @@ class LoginViewModel @Inject constructor(
         when {
             localError == LoginError.INACTIVE -> {
                 errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
-                errors["password"] = context.getString(R.string.user_is_inactive)
 
                 return null
             }
@@ -67,7 +60,6 @@ class LoginViewModel @Inject constructor(
             serverError == LoginError.NO_SERVER || serverError == LoginError.UNKNOWN -> return localUser
             serverError == LoginError.INACTIVE -> {
                 errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
-                errors["password"] = context.getString(R.string.user_is_inactive)
 
                 return null
             }

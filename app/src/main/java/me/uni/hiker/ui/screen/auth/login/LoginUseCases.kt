@@ -5,6 +5,7 @@ import me.uni.hiker.api.model.LoginResponse
 import me.uni.hiker.api.model.RemoteUser
 import me.uni.hiker.api.service.UserService
 import me.uni.hiker.db.dao.LocalUserDAO
+import me.uni.hiker.model.ErrorChecker
 import me.uni.hiker.model.user.Login
 import me.uni.hiker.model.user.NewUser
 import me.uni.hiker.model.user.User
@@ -16,6 +17,16 @@ class LoginUseCases @Inject constructor(
     private val userService: UserService,
     private val hasher: Hasher,
 ) {
+    fun validateField(login: Login, errorChecker: ErrorChecker): Boolean {
+        var areFieldsRight = !errorChecker.isFieldBlank(login.usernameOrEmail, "usernameOrEmail")
+
+        areFieldsRight = !errorChecker.isFieldBlank(login.password, "password") &&
+                errorChecker.lengthConstraintsMatch(login.password, "password", min = 8, max = 255) &&
+                areFieldsRight
+
+        return areFieldsRight
+    }
+
     suspend fun loginToServer(login: Login): Pair<LoginResponse?, LoginError?> {
         try {
             userService.login(login).run {
