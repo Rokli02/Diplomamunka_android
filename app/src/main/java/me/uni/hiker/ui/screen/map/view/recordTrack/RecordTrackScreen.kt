@@ -138,7 +138,7 @@ fun BoxScope.RecordTrackScreen(
             onSave = {
                 coroutineScope.launch {
                     try {
-                        recordTrackViewModel.saveRecordedTrack(it, userContext.user?.id)
+                        recordTrackViewModel.saveRecordedTrack(it, userContext.user?.remoteId)
                         recordTrackViewModel.dropRecordedTrack()
                     } catch(exc: InvalidDataException) {
                         snackbar.showSnackbar(

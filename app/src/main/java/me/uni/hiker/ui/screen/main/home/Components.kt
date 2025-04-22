@@ -144,29 +144,40 @@ fun LocalTracksSurface(
     val context = LocalContext.current
 
     PreviewSurface {
-        for ((i, track) in localTracks.withIndex()) {
-            TrackItem(track = track)
+        if (localTracks.isEmpty()) {
+            Spacer(modifier = Modifier.height(36.dp))
+            Text(
+                text = context.getString(R.string.no_track_yet),
+                color = AppTheme.colors.link,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.W500,
+            )
+            Spacer(modifier = Modifier.height(36.dp))
+        } else {
+            for ((i, track) in localTracks.withIndex()) {
+                TrackItem(track = track)
 
-            if (localTracks.size - 1 != i) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 9.dp),
-                    color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
-                )
+                if (localTracks.size - 1 != i) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 9.dp),
+                        color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
+                    )
+                }
             }
-        }
 
-        Text(
-            modifier = Modifier
-                .clip(shape = RoundedCornerShape(6.dp))
-                .clickable(onClick = navigateToLocalTrack)
-                .padding(horizontal = 8.dp, vertical = 3.dp),
-            text = context.getString(R.string.more),
-            color = AppTheme.colors.link,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.W500,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+            Text(
+                modifier = Modifier
+                    .clip(shape = RoundedCornerShape(6.dp))
+                    .clickable(onClick = navigateToLocalTrack)
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
+                text = context.getString(R.string.more),
+                color = AppTheme.colors.link,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.W500,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -175,12 +186,14 @@ fun PreviewSurface(modifier: Modifier = Modifier, content: @Composable ColumnSco
     Box(modifier = modifier
         .padding(vertical = 12.dp)
         .fillMaxWidth(.96f)
-        .shadow(elevation = 2.dp, shape = RoundedCornerShape(6.dp))) {
+        .shadow(elevation = 2.dp, shape = RoundedCornerShape(6.dp))
+    ) {
         Column(
             modifier = Modifier
-                .padding(1.dp)
+                .fillMaxWidth()
                 .background(AppTheme.colors.background, RoundedCornerShape(6.dp)),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 

@@ -47,6 +47,8 @@
     <string name="unsuccessful_sign_up_username_already_occupied">A felhasználónév már foglalt</string>
     <string name="unsuccessful_sign_up_email_already_occupied">Az email cím már foglalt</string>
     <string name="username_or_password_is_incorrect">A megadott felhasználónév vagy jelsző helytelen!</string>
+    <string name="user_is_inactive">A használni kívánt profil jelenleg inaktiválva van!</string>
+    <string name="no_track_yet">Még nincs rögzített túrád</string>
     <string name="start">Start</string>
     <string name="finish">Cél</string>
     <string name="searchbar_label">Keress rá egy helyre…</string>

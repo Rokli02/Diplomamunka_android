@@ -90,16 +90,8 @@ fun AllTracksScreen(
         focusedTrack = focusedTrack,
         unfocusTrack = unfocusTrack,
         goToDetails = { track ->
-            var isRemote = false
-
-            val id = if (track.id != null) { track.id } else {
-                isRemote = true
-
-                track.remoteId
-            }
-
-            if (id != null) {
-                mapNavController.navigate(Screen.TrackDetailsMap(id, isRemote))
+            if (track.id != null || track.remoteId != null) {
+                mapNavController.navigate(Screen.TrackDetailsMap(track.id, track.remoteId))
             }
         }
     )

@@ -7,6 +7,7 @@ import java.time.LocalDate
 @Immutable
 data class User(
     val id: Long,
+    val remoteId: String? = null,
     val name: String,
     val username: String,
     val email: String,
@@ -17,6 +18,7 @@ data class User(
         fun fromEntity(entity: LocalUser): User {
             return User(
                 id = entity.id,
+                remoteId = entity.remoteId,
                 name = entity.name,
                 username = entity.username,
                 email = entity.email,

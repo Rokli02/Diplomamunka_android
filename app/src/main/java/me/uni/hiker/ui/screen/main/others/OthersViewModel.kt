@@ -23,17 +23,10 @@ class OthersViewModel @Inject constructor(
     val isServerAvailable = _isServerAvailable.asStateFlow()
 
     init {
-        Log.d("TEST", "Begining of init")
-
         if (ConnectionService.hasConnection(context)) {
-            Log.d("TEST", "Has internet connection")
             viewModelScope.launch {
                 val isAvailable = try {
                     val healthcheckResponse = commonService.healthcheck()
-                    Log.d("TEST", "After getting response")
-
-
-                    Log.d("TEST", "Status code is ${healthcheckResponse.code()}, while status is ${healthcheckResponse.body()?.status}")
 
                     healthcheckResponse.code() == 200 && healthcheckResponse.body()?.status == "Ok"
                 } catch (err: Exception) {
@@ -42,10 +35,8 @@ class OthersViewModel @Inject constructor(
                 }
 
                 _isServerAvailable.update { isAvailable }
-
             }
         } else {
-            Log.d("TEST", "Doesn't have internet connection")
             _isServerAvailable.update { false }
         }
 

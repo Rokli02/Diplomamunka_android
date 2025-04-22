@@ -114,7 +114,7 @@ fun GoogleMapScreen() {
 
                         TrackDetailsScreen(
                             trackId = tdm.trackId,
-                            isRemote = tdm.isRemote,
+                            remoteId = tdm.remoteId,
                             mapNavController = mapNavController,
                         )
                     }

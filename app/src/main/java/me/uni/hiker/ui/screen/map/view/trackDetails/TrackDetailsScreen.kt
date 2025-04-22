@@ -13,8 +13,8 @@ import me.uni.hiker.ui.screen.map.service.rememberLocationPermissionAndRequest
 
 @Composable
 fun TrackDetailsScreen(
-    trackId: Long,
-    isRemote: Boolean,
+    trackId: Long?,
+    remoteId: String?,
     mapNavController: NavHostController,
     trackDetailsViewModel: TrackDetailsViewModel = hiltViewModel(),
 ) {
@@ -22,11 +22,11 @@ fun TrackDetailsScreen(
     val isGpsEnabled = rememberGPSEnabled(isLocationEnabled)
     val userContext = UserContext
 
-    LaunchedEffect(key1 = trackId, key2 = isRemote) {
-        if (isRemote) {
-            trackDetailsViewModel.getRemoteTrackDetails(trackId)
+    LaunchedEffect(key1 = trackId, key2 = remoteId) {
+        if (remoteId != null) {
+            trackDetailsViewModel.getRemoteTrackDetails(remoteId)
         } else {
-            trackDetailsViewModel.getTrackDetails(trackId, userContext.user?.id)
+            trackDetailsViewModel.getTrackDetails(trackId!!, userContext.user?.id)
         }.also {
             trackDetailsViewModel.track?.also {
                 trackDetailsViewModel.focusOnPoint(LatLng(it.lat, it.lon))

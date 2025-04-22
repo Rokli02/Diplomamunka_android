@@ -6,7 +6,7 @@ import java.time.LocalDate
 @Immutable
 data class Track (
     val id: Long? = null,
-    val remoteId: Long? = null,
+    val remoteId: String? = null,
     val name: String,
     override val lat: Double,
     override val lon: Double,

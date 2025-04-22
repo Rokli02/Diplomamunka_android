@@ -1,7 +1,18 @@
 package me.uni.hiker.api.model
 
-import me.uni.hiker.model.user.User
+import androidx.compose.runtime.Immutable
+import java.util.Date
 
-data class LoginResponse(val token: String, val user: User)
+@Immutable
+data class RemoteUser(
+    val id: String,
+    val name: String,
+    val username: String,
+    val email: String,
+    val createdAt: Date,
+    val rights: Int,
+)
 
-typealias SignUpResponse = User
+data class LoginResponse(val token: String, val user: RemoteUser)
+
+typealias SignUpResponse = RemoteUser

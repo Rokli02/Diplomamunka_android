@@ -1,5 +1,7 @@
 package me.uni.hiker.ui.screen.main.others
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,6 +42,8 @@ import me.uni.hiker.ui.component.MenuItem
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.Blue
 import me.uni.hiker.ui.theme.HikeRTheme
+import me.uni.hiker.ui.theme.LightGreen
+import me.uni.hiker.ui.theme.LightRed
 import me.uni.hiker.ui.theme.specifiedCustomColors
 import java.time.LocalDate
 
@@ -76,6 +82,7 @@ fun OthersView(
         }
 
         MenuItem(
+            modifier = Modifier.padding(bottom = 6.dp),
             icon = serverStatusItem.icon,
             text = serverStatusItem.text,
         )
@@ -116,6 +123,9 @@ fun ProfileMenuItem(
     logoutUser: () -> Unit
 ) {
     val context = LocalContext.current
+    val profileShadowColor = remember (user.token) {
+        if (user.token == null) LightRed else LightGreen
+    }
 
     Row (
         modifier = modifier
@@ -126,7 +136,12 @@ fun ProfileMenuItem(
         horizontalArrangement = Arrangement.Start,
     ) {
         CustomIcon(
-            modifier = Modifier.size(44.dp),
+            modifier = Modifier.size(46.dp).shadow(
+                elevation = 2.dp,
+                ambientColor = profileShadowColor,
+                spotColor = profileShadowColor,
+                shape = CircleShape,
+            ).padding(5.dp),
             icon = Icons.Filled.Person,
             tint = AppTheme.colors.onBackground,
         )

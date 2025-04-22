@@ -8,12 +8,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.uni.hiker.api.service.CommonService
+import me.uni.hiker.api.service.TrackService
 import me.uni.hiker.api.service.UserService
 import me.uni.hiker.db.HikerDatabase
 import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.dao.TrackDAO
+import me.uni.hiker.ui.screen.auth.login.LoginUseCases
 import me.uni.hiker.utils.encrypter.Hasher
 import me.uni.hiker.utils.encrypter.PBKDF2Hasher
 import retrofit2.Retrofit
@@ -77,4 +79,18 @@ class DependencyInjection {
     @Provides
     @Singleton
     fun provideCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTrackService(retrofit: Retrofit): TrackService = retrofit.create(TrackService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLoginUseCases(
+        userDAO: LocalUserDAO,
+        userService: UserService,
+        hasher: Hasher,
+    ): LoginUseCases {
+        return LoginUseCases(userDAO, userService, hasher)
+    }
 }

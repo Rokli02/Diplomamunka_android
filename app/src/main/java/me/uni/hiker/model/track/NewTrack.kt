@@ -11,7 +11,7 @@ data class NewTrack(
     var lon: Double,
     var length: Float,
 ) {
-    fun toEntity(userId: Long?): Track {
+    fun toEntity(userId: String?): Track {
         return Track(
             remoteId = null,
             userId = userId,

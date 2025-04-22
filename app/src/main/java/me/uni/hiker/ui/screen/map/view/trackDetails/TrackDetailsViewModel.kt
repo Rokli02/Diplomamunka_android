@@ -32,7 +32,7 @@ class TrackDetailsViewModel @Inject constructor(
     var points = mutableStateListOf<Point>()
         private set
 
-    suspend fun getRemoteTrackDetails(trackId: Long) {
+    suspend fun getRemoteTrackDetails(trackId: String) {
         TODO("Http kérés a szerver felé")
     }
     suspend fun getTrackDetails(trackId: Long, userId: Long?) {

@@ -9,9 +9,9 @@ data class NewUser(
     var email: String,
     var password: String,
 ) {
-    fun toEntity(): LocalUser {
+    fun toEntity(remoteId: String? = null): LocalUser {
         return LocalUser(
-            remoteId = null,
+            remoteId = remoteId,
             name = this.name,
             username = this.username,
             email = this.email,

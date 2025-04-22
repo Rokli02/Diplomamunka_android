@@ -82,41 +82,45 @@ private fun HomeViewPreview() {
                 token = null,
                 createdAt = LocalDate.now(),
             ),
-            localTracks = listOf(
-                Track(
-                    id = 0L,
-                    remoteId = null,
-                    name = "Test Track",
-                    length = 202.6f,
-                    lat = 27.4000,
-                    lon = 47.7000,
-                    createdAt = LocalDate.now(),
-                    updatedAt = LocalDate.now(),
-                ),
-                Track(
-                    id = 1L,
-                    remoteId = null,
-                    name = "Test Track",
-                    length = 200f,
-                    lat = 27.4000,
-                    lon = 47.7000,
-                    createdAt = LocalDate.now(),
-                    updatedAt = LocalDate.now(),
-                ),
-                Track(
-                    id = 2L,
-                    remoteId = null,
-                    name = "Test Track",
-                    length = 200f,
-                    lat = 27.4000,
-                    lon = 47.7000,
-                    createdAt = LocalDate.now(),
-                    updatedAt = LocalDate.now(),
-                ),
-            ),
+            localTracks = listOf(),
             navigateToLogin = {},
             navigateToMap = {},
             navigateToLocalTrack = {},
         )
     }
 }
+
+/*
+
+Track(
+    id = 0L,
+    remoteId = null,
+    name = "Test Track",
+    length = 202.6f,
+    lat = 27.4000,
+    lon = 47.7000,
+    createdAt = LocalDate.now(),
+    updatedAt = LocalDate.now(),
+),
+Track(
+    id = 1L,
+    remoteId = null,
+    name = "Test Track",
+    length = 200f,
+    lat = 27.4000,
+    lon = 47.7000,
+    createdAt = LocalDate.now(),
+    updatedAt = LocalDate.now(),
+),
+Track(
+    id = 2L,
+    remoteId = null,
+    name = "Test Track",
+    length = 200f,
+    lat = 27.4000,
+    lon = 47.7000,
+    createdAt = LocalDate.now(),
+    updatedAt = LocalDate.now(),
+),
+
+*/

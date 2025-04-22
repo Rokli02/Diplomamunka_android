@@ -23,7 +23,7 @@ import java.time.LocalDateTime
         Track::class,
         RecordedLocation::class,
    ],
-    version = 2,
+    version = 5,
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class HikerDatabase : RoomDatabase() {

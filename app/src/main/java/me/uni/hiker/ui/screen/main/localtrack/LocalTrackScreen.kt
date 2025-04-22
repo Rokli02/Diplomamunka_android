@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import me.uni.hiker.ui.provider.UserContext
 import me.uni.hiker.ui.screen.Screen
+import androidx.core.net.toUri
 
 @Composable
 fun LocalTrackScreen(
@@ -33,7 +34,7 @@ fun LocalTrackScreen(
         onItemClick = {
             val trackDetailsIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("${Screen.BASE_URI}/map/details?trackId=$it&isRemote=${false}")
+                "${Screen.BASE_URI}/map/details?trackId=$it".toUri()
             )
 
             context.startActivity(trackDetailsIntent)
