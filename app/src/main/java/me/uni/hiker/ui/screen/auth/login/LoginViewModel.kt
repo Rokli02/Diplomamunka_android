@@ -57,7 +57,16 @@ class LoginViewModel @Inject constructor(
         val (userFromServer, serverError) = loginUseCases.loginToServer(login)
 
         when {
-            serverError == LoginError.NO_SERVER || serverError == LoginError.UNKNOWN -> return localUser
+            serverError == LoginError.NO_SERVER || serverError == LoginError.UNKNOWN -> {
+                if (localError != null) {
+                    errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
+                    errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
+
+                    return null
+                }
+
+                return localUser
+            }
             serverError == LoginError.INACTIVE -> {
                 errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
 

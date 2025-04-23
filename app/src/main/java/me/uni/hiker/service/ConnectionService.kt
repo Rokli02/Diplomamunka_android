@@ -2,7 +2,6 @@ package me.uni.hiker.service
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +22,6 @@ object ConnectionService {
                     emit(currentValue)
                 }
 
-                Log.d("TEST", "onlineObserverFlow emited")
                 delay(3000)
             }
         }

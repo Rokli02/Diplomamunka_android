@@ -1,7 +1,10 @@
 package me.uni.hiker.model.track
 
 import androidx.compose.runtime.Immutable
+import me.uni.hiker.api.model.RemoteTrack
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 @Immutable
 data class Track (
@@ -25,6 +28,23 @@ data class Track (
                 length = entity.length,
                 createdAt = entity.createdAt!!,
                 updatedAt = entity.updatedAt!!,
+            )
+        }
+
+        fun fromRemoteTrack(remoteTrack: RemoteTrack): Track {
+            return Track(
+                id = null,
+                remoteId = remoteTrack.id,
+                name = remoteTrack.name,
+                lat = remoteTrack.lat,
+                lon = remoteTrack.lon,
+                length = remoteTrack.length,
+                createdAt = Instant.ofEpochMilli(remoteTrack.createdAt.toInstant().toEpochMilli())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate(),
+                updatedAt = Instant.ofEpochMilli(remoteTrack.updatedAt.toInstant().toEpochMilli())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate(),
             )
         }
     }

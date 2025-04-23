@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import dagger.hilt.android.AndroidEntryPoint
+import me.uni.hiker.model.Profile
 import me.uni.hiker.ui.layout.AuthLayout
 import me.uni.hiker.ui.layout.BasicLayout
 import me.uni.hiker.ui.layout.TopBarProps
@@ -48,9 +49,12 @@ import me.uni.hiker.ui.theme.HikeRTheme
 import me.uni.hiker.utils.session.UserSessionViewModel
 import me.uni.hiker.utils.session.getUserData
 import me.uni.hiker.utils.session.getUserSharedPreferences
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var profile: Profile
     private lateinit var userSharedPreferences: SharedPreferences
     private lateinit var userSessionViewModel: UserSessionViewModel
 
@@ -67,9 +71,10 @@ class MainActivity : ComponentActivity() {
 
         val usvm by viewModels<UserSessionViewModel>()
         userSessionViewModel = usvm
-        userSessionViewModel.userSharedPreferences = userSharedPreferences
+        userSessionViewModel.init(userSharedPreferences, profile)
 
         userSharedPreferences.getUserData()?.also { sessionUserData ->
+            profile.setUser(sessionUserData)
             userSessionViewModel.user = sessionUserData
         }
 
@@ -193,7 +198,12 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
 
+        if (!userSessionViewModel.isInitialized()) {
+            userSessionViewModel.init(userSharedPreferences, profile)
+        }
+
         userSharedPreferences.getUserData()?.also { sessionUserData ->
+            profile.setUser(sessionUserData)
             userSessionViewModel.user = sessionUserData
         }
     }

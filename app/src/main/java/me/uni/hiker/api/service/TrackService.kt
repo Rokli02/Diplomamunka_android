@@ -13,17 +13,17 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TrackService {
-    @GET("/tracks")
+    @GET("tracks")
     suspend fun getAll(
         @Query("p") page: Int? = null,
         @Query("ps") pageSize: Int? = null,
         @Query("f") filter: String? = null,
     ): Response<GetAllResponse>
 
-    @GET("/tracks/{id}")
+    @GET("tracks/{id}")
     suspend fun getById(@Path("id") externalId: String): Response<GetByIdResponse>
 
-    @GET("/tracks/lat/{minLat}/{maxLat}/lon/{minLon}/{maxLon}")
+    @GET("tracks/lat/{minLat}/{maxLat}/lon/{minLon}/{maxLon}")
     suspend fun getByBoundaries(
         @Path("minLat") minLat: Double,
         @Path("maxLat") maxLat: Double,
@@ -32,6 +32,6 @@ interface TrackService {
         @Query("cdd") clusterDistanceDivisor: Int?,
     ): Response<GetByBoundariesResponse>
 
-    @POST("/tracks")
+    @POST("tracks")
     suspend fun save(@Body track: SaveRequestBody): Response<SaveResponse>
 }

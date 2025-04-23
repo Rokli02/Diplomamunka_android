@@ -15,10 +15,13 @@ import me.uni.hiker.db.dao.LocalUserDAO
 import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.RecordedLocationDAO
 import me.uni.hiker.db.dao.TrackDAO
+import me.uni.hiker.model.Profile
 import me.uni.hiker.ui.screen.auth.login.LoginUseCases
 import me.uni.hiker.ui.screen.auth.signup.SignUpUseCases
 import me.uni.hiker.utils.encrypter.Hasher
 import me.uni.hiker.utils.encrypter.PBKDF2Hasher
+import me.uni.hiker.utils.interceptors.AuthorizationInterceptor
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -68,7 +71,15 @@ class DependencyInjection {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit = Retrofit.Builder()
+    fun provideOkHttpClient(profile: Profile): OkHttpClient = OkHttpClient()
+        .newBuilder()
+        .addInterceptor(AuthorizationInterceptor(profile))
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .client(okHttpClient)
         .baseUrl("http://192.168.0.104:3000/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -103,5 +114,11 @@ class DependencyInjection {
         hasher: Hasher,
     ): SignUpUseCases {
         return SignUpUseCases(userDAO, userService, hasher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfile(): Profile {
+        return Profile()
     }
 }
