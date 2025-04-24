@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -20,6 +21,7 @@ import androidx.paging.compose.itemKey
 import kotlinx.coroutines.flow.flow
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.ui.component.Searchbar
+import me.uni.hiker.ui.component.Skeleton
 import me.uni.hiker.ui.component.TrackItem
 //import me.uni.hiker.ui.provider.BasicLayoutProvider
 import me.uni.hiker.ui.theme.AppTheme
@@ -64,7 +66,17 @@ fun LocalTrackView(
                 }
             }
 
-            //TODO("Skeletons Items on loading")
+            if (tracks.loadState.append == LoadState.Loading) {
+                items (3) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Skeleton(modifier = Modifier.fillMaxWidth().height(72.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(120.dp))
+            }
         }
 
         Searchbar(

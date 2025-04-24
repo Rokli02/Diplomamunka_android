@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * @param debounceTime Debounce time in miliseconds.
+ * @param debounceTime Debounce time in milliseconds.
  * @param scope Scope used for launching an async code block that will run after `debounceTime` is up.
  * @param onDebounce Action to run.
  * @return A `Job` that can be used to cancel this debounce event.

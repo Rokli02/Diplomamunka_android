@@ -26,7 +26,10 @@ import androidx.compose.ui.unit.dp
 import me.uni.hiker.ui.theme.HikeRTheme
 
 @Composable
-fun Loading(@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = .33f))) {
+fun Loading(
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = .33f)),
+    iconModifier: Modifier = Modifier,
+) {
     val rotate = rememberInfiniteTransition("infinite loading animation").run {
         animateFloat(
             initialValue = 0f,
@@ -44,7 +47,7 @@ fun Loading(@SuppressLint("ModifierParameter") modifier: Modifier = Modifier.fil
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            modifier = Modifier
+            modifier = iconModifier
                 .fillMaxSize(.2f)
                 .defaultMinSize(24.dp)
                 .rotate(rotate.value),

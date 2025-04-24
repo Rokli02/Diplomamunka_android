@@ -1,8 +1,11 @@
 package me.uni.hiker.utils
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 object DateFormatter {
@@ -24,4 +27,10 @@ object DateFormatter {
     fun formatTime(dateTime: String): LocalDateTime {
         return LocalDateTime.from(dateTimeFormatter.parse(dateTime))
     }
+}
+
+fun Date.toLocalDate(): LocalDate {
+    return Instant.ofEpochMilli(this.time)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
 }
