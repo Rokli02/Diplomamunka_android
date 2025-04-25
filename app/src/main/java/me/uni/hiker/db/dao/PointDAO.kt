@@ -7,7 +7,7 @@ import me.uni.hiker.db.entity.Point
 
 @Dao
 interface PointDAO {
-    @Query("SELECT * FROM point WHERE track_id = :trackId")
+    @Query("SELECT * FROM point WHERE track_id = :trackId ORDER BY `order`")
     suspend fun findAllByTrack(trackId: Long): List<Point>
 
     @Insert

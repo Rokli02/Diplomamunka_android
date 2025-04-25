@@ -9,6 +9,16 @@ data class Point(
     val lat: Double,
     val lon: Double,
 ) {
+    fun toEntity(trackId: Long, order: Int): me.uni.hiker.db.entity.Point {
+        return me.uni.hiker.db.entity.Point(
+            id = 0,
+            lat = lat,
+            lon = lon,
+            order = order,
+            trackId = trackId,
+        )
+    }
+
     companion object {
         private fun fromEntity(entity: me.uni.hiker.db.entity.Point): Point {
             return Point(

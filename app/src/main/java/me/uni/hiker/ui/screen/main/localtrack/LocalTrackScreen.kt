@@ -18,11 +18,6 @@ fun LocalTrackScreen(
     localTrackViewModel: LocalTrackViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val userContext = UserContext
-
-    LaunchedEffect(userContext.user) {
-        localTrackViewModel.currentUser = userContext.user
-    }
 
     val filter by localTrackViewModel.filterFlow.collectAsState()
     val trackFlow by localTrackViewModel.trackFlowState.collectAsState()

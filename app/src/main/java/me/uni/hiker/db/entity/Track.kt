@@ -11,7 +11,7 @@ import java.time.LocalDate
     foreignKeys = [
         ForeignKey(
             entity = LocalUser::class,
-            parentColumns = ["id"],
+            parentColumns = ["remote_id"],
             childColumns = ["user_id"],
             onDelete = ForeignKey.CASCADE,
         )

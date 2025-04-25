@@ -8,17 +8,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import kotlinx.coroutines.flow.flow
+import me.uni.hiker.R
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.ui.component.Searchbar
 import me.uni.hiker.ui.component.Skeleton
@@ -62,6 +68,8 @@ fun LocalTrackView(
                         HorizontalDivider(
                             color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
                         )
+                    } else {
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
             }
@@ -71,6 +79,17 @@ fun LocalTrackView(
                     Spacer(modifier = Modifier.height(4.dp))
                     Skeleton(modifier = Modifier.fillMaxWidth().height(72.dp))
                     Spacer(modifier = Modifier.height(4.dp))
+                }
+            } else {
+                item {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.end_of_list),
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W400,
+                        color = AppTheme.colors.onBackgroundSecondary
+                    )
                 }
             }
 

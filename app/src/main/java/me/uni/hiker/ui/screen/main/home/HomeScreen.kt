@@ -17,21 +17,27 @@ fun HomeScreen(
     val userContext = UserContext
 
     LaunchedEffect(userContext.user) {
-        homeViewModel.user = userContext.user
         homeViewModel.loadLocalTracks()
+        homeViewModel.loadSharedTracks()
     }
 
     val localTracks by homeViewModel.localTracksFlow.collectAsState()
+    val sharedTracks by homeViewModel.sharedTracksFlow.collectAsState()
 
     HomeView(
         isLoggedIn = userContext.isLoggedIn,
         user = userContext.user,
         localTracks = localTracks,
+        sharedTracks = sharedTracks,
         navigateToLogin = { navController.navigate(Screen.Login) },
         navigateToMap = { navController.navigate(Screen.GoogleMap) },
         navigateToLocalTrack = {
             navController.popBackStack()
             navController.navigate(Screen.LocalTrack)
+        },
+        navigateToSharedTrack = {
+            navController.popBackStack()
+            navController.navigate(Screen.SharedTrack)
         }
     )
 }

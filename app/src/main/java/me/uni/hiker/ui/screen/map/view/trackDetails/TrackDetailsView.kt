@@ -24,13 +24,14 @@ import kotlin.math.atan2
 
 @Composable
 fun TrackDetailsView(
+    trackId: Any, // Long or String
     cameraPositionState: CameraPositionState,
     isGpsEnabled: Boolean,
     points: List<Point>,
 ) {
     val context = LocalContext.current
 
-    val polyPoints = remember (points.size) {
+    val polyPoints = remember (points.size, trackId) {
         points.map { LatLng(it.lat, it.lon) }
     }
 
@@ -48,7 +49,7 @@ fun TrackDetailsView(
             myLocationButtonEnabled = isGpsEnabled,
         ),
     ) {
-        if (points.isNotEmpty()) {
+        if (points.isNotEmpty() && polyPoints.isNotEmpty()) {
             val startingPointState = rememberMarkerState(key = points.first().id.toString(), position = polyPoints.first())
             val finishPointState = rememberMarkerState(key = points.last().id.toString(), position = polyPoints.last())
             val finishRotation = remember (points.last().id, cameraPositionState.position.bearing) {

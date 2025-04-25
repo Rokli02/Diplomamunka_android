@@ -14,6 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import me.uni.hiker.R
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.ui.theme.AcceptButtonColors
@@ -37,14 +43,16 @@ fun AllTrackUIView(
     focusedTrack: Track?,
     unfocusTrack: () -> Unit,
     goToDetails: (Track) -> Unit,
+    onShareTrack: suspend (Track) -> Unit,
+    onSaveTrack: suspend (Track) -> Unit,
     isLoggedIn: Boolean,
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(focusedTrack) {
         focusedTrack?.also { bottomSheetState.show() } ?: bottomSheetState.hide()
     }
-
 
     if (focusedTrack != null) {
         ModalBottomSheet(
@@ -95,10 +103,19 @@ fun AllTrackUIView(
                     }
 
                     if (isLoggedIn) {
+                        var isButtonLoading by remember { mutableStateOf(false) }
+
                         if (focusedTrack.remoteId == null) {
                             Button(
                                 colors = DefaultButtonColors,
-                                onClick = { /*TODO Megosztani a túrát másokkal */ }
+                                onClick = {
+                                    isButtonLoading = true
+                                    coroutineScope.launch {
+                                        onShareTrack(focusedTrack).also {
+                                            isButtonLoading = false
+                                        }
+                                    }
+                                }
                             ) {
                                 Text(
                                     text = stringResource(R.string.share),
@@ -110,7 +127,14 @@ fun AllTrackUIView(
                         } else if (focusedTrack.id == null) {
                             Button(
                                 colors = AcceptButtonColors,
-                                onClick = { /*TODO A felhasználónak menteni a túrát */ }
+                                onClick = {
+                                    isButtonLoading = true
+                                    coroutineScope.launch {
+                                        onSaveTrack(focusedTrack).also {
+                                            isButtonLoading = false
+                                        }
+                                    }
+                                }
                             ) {
                                 Text(
                                     text = stringResource(R.string.save),
@@ -143,6 +167,8 @@ private fun AllTrackUIViewPreview() {
             ),
             unfocusTrack = {},
             goToDetails = {},
+            onShareTrack = {},
+            onSaveTrack = {},
             isLoggedIn = true,
         )
     }

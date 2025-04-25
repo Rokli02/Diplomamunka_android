@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import me.uni.hiker.db.dao.TrackDAO
+import me.uni.hiker.model.Profile
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.model.user.User
 import me.uni.hiker.utils.debounce
@@ -25,12 +26,12 @@ const val DEBOUNCE_TIME = 600L
 @HiltViewModel
 class LocalTrackViewModel @Inject constructor(
     private val trackDAO: TrackDAO,
+    private val profile: Profile,
 ): ViewModel() {
     private val _filterFlow = MutableStateFlow("")
     private var _trackFlowState: MutableStateFlow<Flow<PagingData<Track>>> = MutableStateFlow(trackPagingFlow(_filterFlow.value))
     private var debounceJob: Job? = null
 
-    var currentUser: User? = null
     val filterFlow = _filterFlow.asStateFlow()
     val trackFlowState = _trackFlowState.asStateFlow()
 
@@ -48,7 +49,7 @@ class LocalTrackViewModel @Inject constructor(
         return Pager(
             config = PagingConfig(2),
             initialKey = 1,
-            pagingSourceFactory = { trackDAO.findByFilterPagingSource(filter.ifBlank { null }, currentUser?.id) }
+            pagingSourceFactory = { trackDAO.findByFilterPagingSource(filter.ifBlank { null }, profile.user?.remoteId) }
         ).flow.map { data ->
             data.map(Track::fromEntity)
         }.cachedIn(viewModelScope)

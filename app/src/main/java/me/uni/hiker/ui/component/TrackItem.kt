@@ -66,9 +66,9 @@ fun TrackItem(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = "${
                     track.lat.toBigDecimal().setScale(4, RoundingMode.HALF_UP)
-                } latitude\n${
+                } ${stringResource(R.string.latitude)}\n${
                     track.lon.toBigDecimal().setScale(4, RoundingMode.HALF_UP)
-                } longitude",
+                } ${stringResource(R.string.longitude)}",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.W400,
                 textAlign = TextAlign.Start,

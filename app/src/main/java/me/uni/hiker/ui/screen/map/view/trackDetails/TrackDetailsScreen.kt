@@ -26,7 +26,7 @@ fun TrackDetailsScreen(
         if (remoteId != null) {
             trackDetailsViewModel.getRemoteTrackDetails(remoteId)
         } else {
-            trackDetailsViewModel.getTrackDetails(trackId!!, userContext.user?.id)
+            trackDetailsViewModel.getTrackDetails(trackId!!, userContext.user?.remoteId)
         }.also {
             trackDetailsViewModel.track?.also {
                 trackDetailsViewModel.focusOnPoint(LatLng(it.lat, it.lon))
@@ -36,6 +36,7 @@ fun TrackDetailsScreen(
     }
 
     TrackDetailsView(
+        trackId = trackId ?: remoteId!!,
         cameraPositionState = trackDetailsViewModel.cameraPositionState,
         isGpsEnabled = isLocationEnabled && isGpsEnabled,
         points = trackDetailsViewModel.points,
@@ -48,9 +49,7 @@ fun TrackDetailsScreen(
     TrackDetailsUIView(
         goBack = {
             if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = false)) mapNavController.navigate(Screen.AllTrackMap)
+            //TODO: Navigate to the exact location where the track is
         }
     )
-    //TODO: TrackDetailsUIView
-    //          A kezdő pont és a cél legyen megjelölve és start és egy cél zászlóval
-    //          Csak akkor lehessen elindítani egy útvonalat, ha kellő közelségben vagyunk a start ponthoz
 }

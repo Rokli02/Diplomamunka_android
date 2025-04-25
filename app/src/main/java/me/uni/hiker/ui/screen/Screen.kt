@@ -18,7 +18,7 @@ sealed class Screen {
     @Serializable data object GoogleMap: Screen()
     @Serializable data object AllTrackMap: Screen()
     @Serializable data object RecordTrackMap: Screen()
-    @Serializable data class TrackDetailsMap(val trackId: Long?, val remoteId: String? = null): Screen()
+    @Serializable data class TrackDetailsMap(val trackId: Long? = null, val remoteId: String? = null): Screen()
 
     companion object {
         const val BASE_URI = "hiker://main_activity"

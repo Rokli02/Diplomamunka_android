@@ -90,7 +90,6 @@ fun SharedTrackView(
                         Loading(modifier = Modifier.align(Alignment.Center), iconModifier = Modifier.fillMaxSize())
                     }
 
-                    Spacer(modifier = Modifier.height(120.dp))
                 } else {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
@@ -100,9 +99,9 @@ fun SharedTrackView(
                         fontWeight = FontWeight.W400,
                         color = AppTheme.colors.onBackgroundSecondary
                     )
-
-                    Spacer(modifier = Modifier.height(120.dp))
                 }
+
+                Spacer(modifier = Modifier.height(120.dp))
             }
         }
 
@@ -125,18 +124,18 @@ private fun SharedTrackViewPreview() {
             filter = "",
             onFilterChange = {},
             tracks = listOf(
-                Track(
-                    id = 0L,
-                    remoteId = "remoteId",
-                    name = "Track",
-                    lat = 27.0,
-                    lon = 46.2,
-                    length = 1740.25f,
-                    createdAt = LocalDate.now(),
-                    updatedAt = LocalDate.now(),
-                )
+//                Track(
+//                    id = 0L,
+//                    remoteId = "remoteId",
+//                    name = "Track",
+//                    lat = 27.0,
+//                    lon = 46.2,
+//                    length = 1740.25f,
+//                    createdAt = LocalDate.now(),
+//                    updatedAt = LocalDate.now(),
+//                )
             ),
-            totalCount = 1,
+            totalCount = 0,
             onLoadMore = {},
             onItemClick = {},
         )

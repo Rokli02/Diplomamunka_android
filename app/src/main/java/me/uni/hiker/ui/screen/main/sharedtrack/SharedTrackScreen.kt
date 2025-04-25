@@ -1,5 +1,6 @@
 package me.uni.hiker.ui.screen.main.sharedtrack
 
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -13,10 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import me.uni.hiker.R
 import me.uni.hiker.ui.provider.UserContext
+import me.uni.hiker.ui.screen.Screen
 
 @Composable
 fun SharedTrackScreen(sharedTrackViewModel: SharedTrackViewModel = hiltViewModel()) {
@@ -60,6 +63,13 @@ fun SharedTrackScreen(sharedTrackViewModel: SharedTrackViewModel = hiltViewModel
                 sharedTrackViewModel.appendTrackList()
             }
         },
-        onItemClick = {},
+        onItemClick = {
+            val trackDetailsIntent = Intent(
+                Intent.ACTION_VIEW,
+                "${Screen.BASE_URI}/map/details?remoteId=$it".toUri()
+            )
+
+            context.startActivity(trackDetailsIntent)
+        },
     )
 }

@@ -18,6 +18,7 @@ interface TrackService {
         @Query("p") page: Int? = null,
         @Query("ps") pageSize: Int? = null,
         @Query("f") filter: String? = null,
+        @Query("s") sort: String? = null,
     ): Response<GetAllResponse>
 
     @GET("tracks/{id}")
@@ -29,7 +30,7 @@ interface TrackService {
         @Path("maxLat") maxLat: Double,
         @Path("minLon") minLon: Double,
         @Path("maxLon") maxLon: Double,
-        @Query("cdd") clusterDistanceDivisor: Int?,
+        @Query("cdd") clusterDistanceDivisor: Float?,
     ): Response<GetByBoundariesResponse>
 
     @POST("tracks")

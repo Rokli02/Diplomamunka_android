@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
+import me.uni.hiker.api.service.TrackService
 import me.uni.hiker.db.dao.PointDAO
 import me.uni.hiker.db.dao.TrackDAO
 import me.uni.hiker.model.point.Point
@@ -25,6 +25,7 @@ private val middleOfHungary = LatLng(47.48856, 19.04892)
 class TrackDetailsViewModel @Inject constructor(
     private val trackDao: TrackDAO,
     private val pointDAO: PointDAO,
+    private val trackService: TrackService,
 ): ViewModel() {
     val cameraPositionState: CameraPositionState = CameraPositionState(CameraPosition.fromLatLngZoom(middleOfHungary, 14f))
     var track by mutableStateOf<Track?>(null)
@@ -33,11 +34,26 @@ class TrackDetailsViewModel @Inject constructor(
         private set
 
     suspend fun getRemoteTrackDetails(trackId: String) {
-        TODO("Http kérés a szerver felé")
-    }
-    suspend fun getTrackDetails(trackId: Long, userId: Long?) {
-        delay(750)
+        try {
+            val response = trackService.getById(trackId)
 
+            if (response.isSuccessful) {
+                response.body()?.also { remoteTrack ->
+                    points.clear()
+
+                    track = Track.fromRemoteTrack(remoteTrack)
+                    remoteTrack.points?.mapIndexed { index, point ->
+                        point.copy(id = index.toLong())
+                    }?.also {
+                        points.addAll(it)
+                    }
+                }
+            }
+        } catch (exc: Exception) {
+            Log.w("TDVM", exc.message ?: "Couldn't get track details from a remote source!")
+        }
+    }
+    suspend fun getTrackDetails(trackId: Long, userId: String?) {
         track = trackDao.findById(id = trackId, userId = userId)?.let{ Track.fromEntity(it) }
         if (track != null) {
             points.run {

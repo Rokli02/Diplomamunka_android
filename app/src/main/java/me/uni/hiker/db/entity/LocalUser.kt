@@ -9,6 +9,7 @@ import java.time.LocalDate
 @Entity(
     tableName = "local_user",
     indices = [
+        Index(value = ["remote_id"], unique = true),
         Index(value = ["username"], unique = true),
         Index(value = ["email"], unique = true),
     ]

@@ -242,10 +242,8 @@ fun areRecordedPointsValid(locations: List<RecordedLocation>): Boolean {
     return false
 }
 
-fun clusterTracks(tracks: List<Track>, clusterDistanceThreshold: Double): List<AbstractTrack> {
-    if (tracks.isEmpty()) return listOf()
-
-    val clusteredTracks = mutableListOf<AbstractTrack>()
+fun clusterTracks(tracks: List<Track>, clusterDistanceThreshold: Double, clusteredTracks: MutableList<AbstractTrack> = mutableListOf()): List<AbstractTrack> {
+    if (tracks.isEmpty()) return clusteredTracks
 
     tracks.forEach { track ->
         clusteredTracks.forEachIndexed { i, clusteredTrack ->

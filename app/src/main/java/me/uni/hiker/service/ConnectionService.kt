@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 
 object ConnectionService {
-    fun getOnlineObserverFlow(context: Context): Flow<Boolean> {
+    fun getOnlineObserverFlow(context: Context, observeInterval: Long = 3000): Flow<Boolean> {
         return flow {
             var previousValue: Boolean? = null
 
@@ -22,7 +22,7 @@ object ConnectionService {
                     emit(currentValue)
                 }
 
-                delay(3000)
+                delay(observeInterval)
             }
         }
     }

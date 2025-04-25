@@ -11,16 +11,19 @@ import me.uni.hiker.db.entity.Track
 @Dao
 interface TrackDAO {
     @Query("SELECT * FROM track WHERE (CASE WHEN :userId IS NULL THEN user_id IS NULL ELSE user_id = :userId OR user_id IS NULL END) AND (lat BETWEEN :minLat AND :maxLat) AND (lon BETWEEN :minLon AND :maxLon)")
-    suspend fun findAll(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double, userId: Long?): List<Track>
+    suspend fun findAll(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double, userId: String?): List<Track>
 
     @Query("SELECT * FROM track WHERE id = :id AND (CASE WHEN :userId IS NULL THEN user_id IS NULL ELSE user_id = :userId OR user_id IS NULL END)")
-    suspend fun findById(id: Long, userId: Long?): Track?
+    suspend fun findById(id: Long, userId: String?): Track?
 
     @Query("SELECT * FROM track WHERE (CASE WHEN :userId IS NULL THEN user_id IS NULL ELSE user_id = :userId OR user_id IS NULL END) ORDER BY RANDOM() LIMIT :x")
-    suspend fun findByRandomOrderFirstX(x: Int, userId: Long?): List<Track>
+    suspend fun findByRandomOrderFirstX(x: Int, userId: String?): List<Track>
 
     @Query("SELECT * FROM track WHERE (CASE WHEN :filter IS NOT NULL THEN name LIKE '%' || :filter || '%' ELSE 1 END) AND (CASE WHEN :userId IS NULL THEN user_id IS NULL ELSE user_id = :userId OR user_id IS NULL END)")
-    fun findByFilterPagingSource(filter: String?, userId: Long?): PagingSource<Int, Track>
+    fun findByFilterPagingSource(filter: String?, userId: String?): PagingSource<Int, Track>
+
+    @Query("SELECT * FROM track WHERE lat = :lat AND lon = :lon LIMIT 1")
+    suspend fun findSimilar(lat: Double, lon: Double): Track?
 
     @Update
     suspend fun updateOne(track: Track)

@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -137,14 +138,24 @@ fun LoginAdviser(
 }
 
 @Composable
-fun LocalTracksSurface(
-    localTracks: List<Track>,
-    navigateToLocalTrack: () -> Unit,
+fun TracksSurface(
+    label: String,
+    tracks: List<Track>,
+    onClickOther: () -> Unit,
 ) {
     val context = LocalContext.current
 
     PreviewSurface {
-        if (localTracks.isEmpty()) {
+        Text(
+            modifier = Modifier.padding(bottom = 14.dp),
+            text = label,
+            textAlign = TextAlign.Center,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W500,
+            color = AppTheme.colors.onBackgroundSecondary,
+        )
+
+        if (tracks.isEmpty()) {
             Spacer(modifier = Modifier.height(36.dp))
             Text(
                 text = context.getString(R.string.no_track_yet),
@@ -154,10 +165,10 @@ fun LocalTracksSurface(
             )
             Spacer(modifier = Modifier.height(36.dp))
         } else {
-            for ((i, track) in localTracks.withIndex()) {
+            for ((i, track) in tracks.withIndex()) {
                 TrackItem(track = track)
 
-                if (localTracks.size - 1 != i) {
+                if (tracks.size - 1 != i) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 9.dp),
                         color = AppTheme.colors.onBackgroundSecondary.copy(alpha = .45f)
@@ -168,7 +179,7 @@ fun LocalTracksSurface(
             Text(
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(6.dp))
-                    .clickable(onClick = navigateToLocalTrack)
+                    .clickable(onClick = onClickOther)
                     .padding(horizontal = 8.dp, vertical = 3.dp),
                 text = context.getString(R.string.more),
                 color = AppTheme.colors.link,

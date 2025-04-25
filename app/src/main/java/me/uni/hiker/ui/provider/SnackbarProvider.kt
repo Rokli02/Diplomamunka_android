@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.SnackbarDuration
@@ -13,7 +14,9 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -34,16 +37,17 @@ val LocalSnackbarContext: SnackbarContext
 @Composable
 fun SnackbarProvider(content: @Composable (PaddingValues) -> Unit) {
     val state = remember { SnackbarHostState() }
+    val positionOfSnackbar = remember { mutableStateOf(Alignment.BottomCenter) }
     val coroutineScope = rememberCoroutineScope()
-    val snackbarContext = remember { SnackbarContext(state, coroutineScope) }
+    val snackbarContext = remember { SnackbarContext(state, coroutineScope, positionOfSnackbar) }
 
     CompositionLocalProvider(LocalSnackbarState provides snackbarContext) {
         content(PaddingValues())
     }
 
-    Box(modifier = Modifier.fillMaxSize().safeDrawingPadding().safeContentPadding()) {
+    Box(modifier = Modifier.fillMaxSize().safeDrawingPadding().safeContentPadding().padding(top = 80.dp)) {
         SnackbarHost(
-            modifier = Modifier.align(Alignment.BottomCenter).offset(y = -(24.dp)),
+            modifier = Modifier.align(positionOfSnackbar.value).offset(y = -(24.dp)),
             hostState = state,
         )
     }
@@ -53,6 +57,7 @@ fun SnackbarProvider(content: @Composable (PaddingValues) -> Unit) {
 data class SnackbarContext(
     private val state: SnackbarHostState,
     private val coroutineScope: CoroutineScope,
+    private val positionOfSnackbar: MutableState<Alignment>,
 ) {
     private var showJob: Job? = null
 
@@ -61,10 +66,14 @@ data class SnackbarContext(
         duration: SnackbarDuration = SnackbarDuration.Short,
         action: SnackbarAction? = null,
         dismissAction: (() -> Unit)? = {},
+        alignment: Alignment = Alignment.BottomCenter,
     ) {
         showJob?.cancel()
 
         showJob = coroutineScope.launch {
+            if (positionOfSnackbar.value != alignment)
+                positionOfSnackbar.value = alignment
+
             state.showSnackbar(
                 message = message,
                 duration = duration,

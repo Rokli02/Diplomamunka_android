@@ -19,7 +19,7 @@ class AuthorizationInterceptor(private val profile: Profile): Interceptor {
 
         val response = chain.proceed(request)
 
-        if (response.code() == 401) {
+        if (response.code() == 401 && profile.user != null) {
             profile.clear()
             profile.notifySubscribers()
         }
