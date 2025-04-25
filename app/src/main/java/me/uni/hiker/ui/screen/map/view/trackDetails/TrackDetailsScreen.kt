@@ -2,9 +2,11 @@ package me.uni.hiker.ui.screen.map.view.trackDetails
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.launch
 import me.uni.hiker.ui.component.Loading
 import me.uni.hiker.ui.provider.UserContext
 import me.uni.hiker.ui.screen.Screen
@@ -18,15 +20,16 @@ fun TrackDetailsScreen(
     mapNavController: NavHostController,
     trackDetailsViewModel: TrackDetailsViewModel = hiltViewModel(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val isLocationEnabled = rememberLocationPermissionAndRequest()
     val isGpsEnabled = rememberGPSEnabled(isLocationEnabled)
     val userContext = UserContext
 
     LaunchedEffect(key1 = trackId, key2 = remoteId) {
-        if (remoteId != null) {
-            trackDetailsViewModel.getRemoteTrackDetails(remoteId)
+        if (trackId != null) {
+            trackDetailsViewModel.getTrackDetails(trackId, userContext.user?.remoteId)
         } else {
-            trackDetailsViewModel.getTrackDetails(trackId!!, userContext.user?.remoteId)
+            trackDetailsViewModel.getRemoteTrackDetails(remoteId!!)
         }.also {
             trackDetailsViewModel.track?.also {
                 trackDetailsViewModel.focusOnPoint(LatLng(it.lat, it.lon))
@@ -47,9 +50,20 @@ fun TrackDetailsScreen(
     }
 
     TrackDetailsUIView(
+        isRotated = trackDetailsViewModel.cameraPositionState.position.bearing != 0f,
         goBack = {
-            if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = false)) mapNavController.navigate(Screen.AllTrackMap)
+            if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = true)) {
+                mapNavController.popBackStack()
+                mapNavController.navigate(Screen.AllTrackMap)
+            }
             //TODO: Navigate to the exact location where the track is
-        }
+        },
+        zoomToTrack = {
+            coroutineScope.launch {
+                trackDetailsViewModel.track?.also {
+                    trackDetailsViewModel.focusOnPoint(LatLng(it.lat, it.lon), 500)
+                }
+            }
+        },
     )
 }

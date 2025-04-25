@@ -62,9 +62,9 @@ class TrackDetailsViewModel @Inject constructor(
             }
         }
     }
-    suspend fun focusOnPoint(point: LatLng) {
+    suspend fun focusOnPoint(point: LatLng, durationMs: Int = 1000) {
         try {
-            cameraPositionState.animate(CameraUpdateFactory.newLatLng(point), 1000)
+            cameraPositionState.animate(CameraUpdateFactory.newLatLng(point), durationMs)
         } catch (exc: CancellationException) {
             Log.d("CancellationException", "Camera position animation got canceled when zoomed on track details")
         }

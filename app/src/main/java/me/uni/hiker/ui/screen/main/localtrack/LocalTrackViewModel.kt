@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import me.uni.hiker.db.dao.TrackDAO
 import me.uni.hiker.model.Profile
 import me.uni.hiker.model.track.Track
-import me.uni.hiker.model.user.User
 import me.uni.hiker.utils.debounce
 import javax.inject.Inject
 

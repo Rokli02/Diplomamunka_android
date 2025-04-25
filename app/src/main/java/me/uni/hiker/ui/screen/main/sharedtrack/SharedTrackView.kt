@@ -25,7 +25,6 @@ import me.uni.hiker.ui.component.Searchbar
 import me.uni.hiker.ui.component.TrackItem
 import me.uni.hiker.ui.theme.AppTheme
 import me.uni.hiker.ui.theme.HikeRTheme
-import java.time.LocalDate
 
 @Composable
 fun SharedTrackView(
@@ -48,7 +47,7 @@ fun SharedTrackView(
 
             items(
                 count = tracks.size,
-                key = { i -> i }, //tracks[i].remoteId!!
+                key = { i -> tracks[i].remoteId!! },
             ) { i ->
                 val track = tracks[i]
 

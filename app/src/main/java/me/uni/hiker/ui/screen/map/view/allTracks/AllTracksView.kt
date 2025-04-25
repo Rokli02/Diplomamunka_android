@@ -1,13 +1,20 @@
 package me.uni.hiker.ui.screen.map.view.allTracks
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -17,6 +24,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -25,7 +33,6 @@ import me.uni.hiker.model.track.AbstractTrack
 import me.uni.hiker.model.track.ClusteredTrack
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.ui.theme.HikeRTheme
-import me.uni.hiker.utils.MapUtils
 
 private val hungarySoutwestPoint = LatLng(45.76092, 15.81845)
 private val hungaryNortheasePoint = LatLng(48.77124, 23.30561)
@@ -38,7 +45,6 @@ fun AllTracksView(
     isCurrentLocationEnabled: Boolean = false,
     onMapLoaded: () -> Unit,
 ) {
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     GoogleMap(
@@ -67,25 +73,25 @@ fun AllTracksView(
                         Marker(
                             state = MarkerState(LatLng(track.lat, track.lon)),
                             contentDescription = track.name,
-                            title = track.name,
                             tag = track,
                             anchor = Offset(.5f, .5f),
-                            onInfoWindowClick = {
+                            onClick = {
                                 focusTrack(track)
+
+                                false
                             },
                         )
                     }
                     is ClusteredTrack -> {
-                        val clusterIcon = when {
-                            track.size < 10 -> MapUtils.bitmapDescriptorRes(context, R.drawable.cluster_1)
-                            track.size < 25 -> MapUtils.bitmapDescriptorRes(context, R.drawable.cluster_1)
-                            else -> MapUtils.bitmapDescriptorRes(context, R.drawable.cluster_1)
+                        val iconId = when {
+                            track.size < 10 -> R.drawable.cluster_1
+                            track.size < 25 -> R.drawable.cluster_2
+                            else -> R.drawable.cluster_3
                         }
 
-                        Marker(
+                        MarkerComposable(
                             state = MarkerState(LatLng(track.lat, track.lon)),
                             tag = track,
-                            icon = clusterIcon,
                             anchor = Offset(.5f, .5f),
                             onClick = {
                                 coroutineScope.launch {
@@ -101,7 +107,22 @@ fun AllTracksView(
 
                                 true
                             }
-                        )
+                        ) {
+                            Image(
+                                painter = painterResource(iconId),
+                                contentDescription = null,
+                            )
+
+                            Text(
+                                modifier = Modifier.requiredWidth(24.dp),
+                                softWrap = false,
+                                maxLines = 1,
+                                textAlign = TextAlign.Center,
+                                text = "${track.size}",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.W500,
+                            )
+                        }
                     }
                 }
             }

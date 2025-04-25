@@ -105,4 +105,5 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.retrofit)
     implementation(libs.gson)
+    implementation(libs.androidx.material.icons.extended)
 }

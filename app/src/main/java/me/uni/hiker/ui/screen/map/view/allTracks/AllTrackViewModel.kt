@@ -74,6 +74,8 @@ class AllTrackViewModel @Inject constructor(
 
             val remoteClusteredTracks: MutableList<AbstractTrack> = mutableListOf()
 
+            val idString = dbTracks.filter { it.remoteId != null }.map { it.remoteId!! }
+
             try {
                 val response = trackService.getByBoundaries(
                     minLat = bounds.southwest.latitude,
@@ -81,6 +83,7 @@ class AllTrackViewModel @Inject constructor(
                     minLon = bounds.southwest.longitude,
                     maxLon = bounds.northeast.longitude,
                     clusterDistanceDivisor = clusterDistanceThreshold.toFloat(),
+                    ids = idString,
                 )
 
                 if (response.isSuccessful) {

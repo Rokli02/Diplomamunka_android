@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
 
     suspend fun loadSharedTracks() {
         val sharedTracks = trackService.getAll(page = 0, pageSize = ELEMENTS_TO_LOAD, sort = "id:-1").let {
-            if (it.isSuccessful)
+            if (!it.isSuccessful)
                 return@let listOf<Track>()
 
             it.body()?.data?.map(Track::fromRemoteTrack) ?: listOf()

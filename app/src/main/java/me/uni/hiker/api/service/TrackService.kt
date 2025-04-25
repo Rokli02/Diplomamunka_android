@@ -19,18 +19,20 @@ interface TrackService {
         @Query("ps") pageSize: Int? = null,
         @Query("f") filter: String? = null,
         @Query("s") sort: String? = null,
+        @Query("ids") ids: String? = null,
     ): Response<GetAllResponse>
 
     @GET("tracks/{id}")
     suspend fun getById(@Path("id") externalId: String): Response<GetByIdResponse>
 
-    @GET("tracks/lat/{minLat}/{maxLat}/lon/{minLon}/{maxLon}")
+    @POST("tracks/lat/{minLat}/{maxLat}/lon/{minLon}/{maxLon}")
     suspend fun getByBoundaries(
         @Path("minLat") minLat: Double,
         @Path("maxLat") maxLat: Double,
         @Path("minLon") minLon: Double,
         @Path("maxLon") maxLon: Double,
         @Query("cdd") clusterDistanceDivisor: Float?,
+        @Body ids: List<String> = listOf(),
     ): Response<GetByBoundariesResponse>
 
     @POST("tracks")
