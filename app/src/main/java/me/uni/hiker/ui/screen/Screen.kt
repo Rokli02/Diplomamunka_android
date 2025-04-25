@@ -16,7 +16,7 @@ sealed class Screen {
 
     // Map Screens
     @Serializable data object GoogleMap: Screen()
-    @Serializable data object AllTrackMap: Screen()
+    @Serializable data class AllTrackMap(val zoomToLat: Double? = null, val zoomToLon: Double? = null): Screen()
     @Serializable data object RecordTrackMap: Screen()
     @Serializable data class TrackDetailsMap(val trackId: Long? = null, val remoteId: String? = null): Screen()
 

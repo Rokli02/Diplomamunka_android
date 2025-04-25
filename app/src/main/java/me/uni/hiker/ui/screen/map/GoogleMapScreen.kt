@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.google.android.gms.maps.model.LatLng
 import me.uni.hiker.R
 import me.uni.hiker.ui.provider.LocalNavController
 import me.uni.hiker.ui.screen.Screen
@@ -51,7 +52,7 @@ fun GoogleMapScreen() {
                 }
                 ActionType.VIEW_TRACKS -> {
                     if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = true))
-                        mapNavController.navigate(Screen.AllTrackMap)
+                        mapNavController.navigate(Screen.AllTrackMap())
                 }
             }
         }
@@ -66,16 +67,26 @@ fun GoogleMapScreen() {
 
         ) {
             Box(modifier = Modifier.padding(it)) {
-                NavHost(navController = mapNavController, startDestination = Screen.AllTrackMap) {
-                    composable<Screen.AllTrackMap> {
+                NavHost(navController = mapNavController, startDestination = Screen.AllTrackMap()) {
+                    composable<Screen.AllTrackMap> { navBackStackEntry ->
                         LifecycleStartEffect(Unit) {
                             changeTopBarTitle(context.getString(R.string.view_tracks))
 
                             onStopOrDispose {}
                         }
 
+                        val props = navBackStackEntry.toRoute<Screen.AllTrackMap>()
+
+                        val initialLocation = remember (props.zoomToLat, props.zoomToLon) {
+                            if (props.zoomToLat != null && props.zoomToLon != null)
+                                LatLng(props.zoomToLat, props.zoomToLon)
+                            else
+                                null
+                        }
+
                         AllTracksScreen(
                             mapNavController = mapNavController,
+                            initialLocation = initialLocation,
                         )
                     }
                     composable<Screen.RecordTrackMap>(
@@ -93,7 +104,7 @@ fun GoogleMapScreen() {
 
                         RecordTrackScreen(goBack = {
                             if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = true)) {
-                                mapNavController.navigate(route = Screen.AllTrackMap)
+                                mapNavController.navigate(route = Screen.AllTrackMap())
                             }
                         })
                     }

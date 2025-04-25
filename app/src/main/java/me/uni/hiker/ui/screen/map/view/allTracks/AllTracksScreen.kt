@@ -36,6 +36,7 @@ import me.uni.hiker.ui.screen.map.service.rememberLocationPermissionAndRequest
 fun AllTracksScreen(
     mapNavController: NavHostController,
     allTrackViewModel: AllTrackViewModel = hiltViewModel(),
+    initialLocation: LatLng?,
 ) {
     val userContext = UserContext
     val context = LocalContext.current
@@ -71,18 +72,31 @@ fun AllTracksScreen(
         onMapLoaded = {
             loading = false
 
-            currentLocationListener(context) {
-                it?.run {
-                    coroutineScope.launch {
-                        try {
-                            allTrackViewModel
-                                .cameraPositionState
-                                .animate(
-                                    CameraUpdateFactory.newLatLng(LatLng(latitude, longitude)),
-                                    1000,
-                                )
-                        } catch (_: CancellationException) {}
+            if (initialLocation == null) {
+                currentLocationListener(context) {
+                    it?.run {
+                        coroutineScope.launch {
+                            try {
+                                allTrackViewModel
+                                    .cameraPositionState
+                                    .animate(
+                                        CameraUpdateFactory.newLatLng(LatLng(latitude, longitude)),
+                                        1000,
+                                    )
+                            } catch (_: CancellationException) {}
+                        }
                     }
+                }
+            } else {
+                coroutineScope.launch {
+                    try {
+                        allTrackViewModel
+                            .cameraPositionState
+                            .animate(
+                                CameraUpdateFactory.newLatLng(initialLocation),
+                                1000,
+                            )
+                    } catch (_: CancellationException) {}
                 }
             }
 

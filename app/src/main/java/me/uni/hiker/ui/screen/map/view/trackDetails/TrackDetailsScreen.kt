@@ -52,11 +52,13 @@ fun TrackDetailsScreen(
     TrackDetailsUIView(
         isRotated = trackDetailsViewModel.cameraPositionState.position.bearing != 0f,
         goBack = {
-            if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = true)) {
+            if (!mapNavController.popBackStack(Screen.AllTrackMap(), inclusive = true)) {
                 mapNavController.popBackStack()
-                mapNavController.navigate(Screen.AllTrackMap)
+                mapNavController.navigate(Screen.AllTrackMap(
+                    zoomToLat = trackDetailsViewModel.track?.lat,
+                    zoomToLon = trackDetailsViewModel.track?.lon,
+                ))
             }
-            //TODO: Navigate to the exact location where the track is
         },
         zoomToTrack = {
             coroutineScope.launch {
