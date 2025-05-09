@@ -42,7 +42,8 @@ fun GoogleMapScreen() {
     MapDrawer (
         modifier = Modifier.safeContentPadding(),
         goBack = {
-            navController.popBackStack()
+            if (!navController.popBackStack(Screen.Home, inclusive = true))
+                navController.navigate(Screen.Home)
         },
         onItemClick = { actionType ->
             when (actionType) {
