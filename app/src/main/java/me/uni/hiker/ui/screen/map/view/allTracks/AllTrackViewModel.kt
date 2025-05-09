@@ -31,7 +31,7 @@ import me.uni.hiker.ui.screen.map.service.clusterTracks
 import javax.inject.Inject
 import kotlin.math.min
 
-const val TRACK_LOAD_DEBOUNCE_TIME = 350L
+const val TRACK_LOAD_DEBOUNCE_TIME = 250L
 const val CLUSTER_DISTANCE_DIVISOR = 6
 private val middleOfHungary = LatLng(47.48856, 19.04892)
 
@@ -70,7 +70,7 @@ class AllTrackViewModel @Inject constructor(
                 bounds.northeast.latitude - bounds.southwest.latitude,
                 bounds.northeast.longitude - bounds.southwest.longitude) / CLUSTER_DISTANCE_DIVISOR
 
-            Log.d("AllTrackViewModel", "Loading ${dbTracks.size} tracks from device | $bounds")
+            Log.d("ATVM", "Loading ${dbTracks.size} tracks from device | $bounds")
 
             val remoteClusteredTracks: MutableList<AbstractTrack> = mutableListOf()
 

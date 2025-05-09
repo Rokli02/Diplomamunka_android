@@ -52,7 +52,7 @@ fun GoogleMapScreen() {
                         mapNavController.navigate(Screen.RecordTrackMap)
                 }
                 ActionType.VIEW_TRACKS -> {
-                    if (!mapNavController.popBackStack(Screen.AllTrackMap, inclusive = true))
+                    if (!mapNavController.popBackStack(Screen.AllTrackMap(), inclusive = true))
                         mapNavController.navigate(Screen.AllTrackMap())
                 }
             }
@@ -104,7 +104,7 @@ fun GoogleMapScreen() {
                         }
 
                         RecordTrackScreen(goBack = {
-                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap, inclusive = true)) {
+                            if (!mapNavController.popBackStack(route = Screen.AllTrackMap(), inclusive = true)) {
                                 mapNavController.navigate(route = Screen.AllTrackMap())
                             }
                         })
