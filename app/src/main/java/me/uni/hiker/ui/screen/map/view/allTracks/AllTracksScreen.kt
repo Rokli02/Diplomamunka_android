@@ -68,7 +68,7 @@ fun AllTracksScreen(
         tracks = allTrackViewModel.clusteredTracks,
         cameraPositionState = allTrackViewModel.cameraPositionState,
         focusTrack = focusTrack,
-        isCurrentLocationEnabled = hasLocationPermission && isGPSEnabled,
+        isCurrentLocationEnabled = isGPSEnabled,
         onMapLoaded = {
             loading = false
 

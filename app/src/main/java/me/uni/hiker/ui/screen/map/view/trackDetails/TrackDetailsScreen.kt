@@ -41,7 +41,7 @@ fun TrackDetailsScreen(
     TrackDetailsView(
         trackId = trackId ?: remoteId!!,
         cameraPositionState = trackDetailsViewModel.cameraPositionState,
-        isGpsEnabled = isLocationEnabled && isGpsEnabled,
+        isGpsEnabled = isGpsEnabled,
         points = trackDetailsViewModel.points,
     )
 

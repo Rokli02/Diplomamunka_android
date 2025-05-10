@@ -183,6 +183,8 @@ fun rememberGPSEnabled(locationPermissionGranted: Boolean = true): Boolean {
             gpsStatusFlow.collect {
                 if (isGpsEnabled != it) isGpsEnabled = it
             }
+        } else {
+            isGpsEnabled = false
         }
     }
 

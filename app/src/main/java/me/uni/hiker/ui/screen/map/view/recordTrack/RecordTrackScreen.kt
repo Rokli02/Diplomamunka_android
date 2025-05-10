@@ -101,7 +101,7 @@ fun BoxScope.RecordTrackScreen(
         locations = recordTrackViewModel.recordedPoints,
         cameraPositionState = recordTrackViewModel.cameraPositionState,
         isRecording = recordTrackViewModel.isRecording,
-        isGpsEnabled = isGPSEnabled && hasLocationPermission,
+        isGpsEnabled = isGPSEnabled,
     )
 
     RecordedMapUIView(
