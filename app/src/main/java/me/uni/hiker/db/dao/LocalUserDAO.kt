@@ -3,6 +3,7 @@ package me.uni.hiker.db.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import me.uni.hiker.db.entity.LocalUser
 
 @Dao
@@ -18,4 +19,7 @@ interface LocalUserDAO {
 
     @Insert
     suspend fun insertOne(user: LocalUser)
+
+    @Update
+    suspend fun updateOne(user: LocalUser): Int
 }

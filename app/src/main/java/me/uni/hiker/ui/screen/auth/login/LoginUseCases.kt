@@ -5,6 +5,7 @@ import me.uni.hiker.api.model.LoginResponse
 import me.uni.hiker.api.model.RemoteUser
 import me.uni.hiker.api.service.UserService
 import me.uni.hiker.db.dao.LocalUserDAO
+import me.uni.hiker.db.entity.LocalUser
 import me.uni.hiker.model.ErrorChecker
 import me.uni.hiker.model.user.Login
 import me.uni.hiker.model.user.NewUser
@@ -51,7 +52,7 @@ class LoginUseCases @Inject constructor(
         }
     }
 
-    suspend fun loginLocally(login: Login): Pair<User?, LoginError?> {
+    suspend fun loginLocally(login: Login): Pair<LocalUser?, LoginError?> {
         return userDAO.findByEmailOrUsername(login.usernameOrEmail, null).let {
             if (it == null) {
                 return@let Pair(null, LoginError.NOT_FOUND)
@@ -62,10 +63,10 @@ class LoginUseCases @Inject constructor(
             }
 
             if (!hasher.verify(login.password, it.password)) {
-                return@let Pair(null, LoginError.NOT_FOUND)
+                return@let Pair(null, LoginError.INVALID_INPUT)
             }
 
-            return@let Pair(User.fromEntity(it), null)
+            return@let Pair(it, null)
         }
     }
 
@@ -110,7 +111,8 @@ class LoginUseCases @Inject constructor(
         try {
             userDAO.insertOne(newUser.toEntity(user.id))
 
-            val (dbUser, error) = loginLocally(Login(user.username, password))
+            val (dbUserEntity, error) = loginLocally(Login(user.username, password))
+            val dbUser = dbUserEntity?.let { User.fromEntity(it) }
 
             return if (error == null) dbUser else null
         } catch (exc: Exception) {
@@ -118,6 +120,20 @@ class LoginUseCases @Inject constructor(
 
             return null
         }
+    }
+
+    suspend fun modifyLocalUserDate(user: LocalUser, password: String? = null): LocalUser? {
+        var userToModify = user
+        if (password != null) {
+            userToModify = userToModify.copy(
+                password = hasher.hash(password)?: user.password,
+            )
+        }
+
+        if (userDAO.updateOne(userToModify) != 0)
+            return userToModify
+
+        return null
     }
 }
 

@@ -36,21 +36,15 @@ class LoginViewModel @Inject constructor(
         if (!loginUseCases.validateField(login, errorChecker)) { return null }
 
         // Check for local user
-        val (localUser, localError) = loginUseCases.loginLocally(login)
+        val (localUserEntity, localError) = loginUseCases.loginLocally(login)
+        val localUser = localUserEntity?.let { User.fromEntity(it) }
         val hasNetworkConnection = ConnectionService.hasConnection(context)
 
-        when {
-            localError == LoginError.INACTIVE -> {
-                errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
+        if ((localError == LoginError.NOT_FOUND || localError == LoginError.INVALID_INPUT) && !hasNetworkConnection ) {
+            errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
+            errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
 
-                return null
-            }
-            localError == LoginError.NOT_FOUND && !hasNetworkConnection -> {
-                errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
-                errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
-
-                return null
-            }
+            return null
         }
 
         // If no critical error occurred check for an online profile
@@ -58,6 +52,10 @@ class LoginViewModel @Inject constructor(
 
         when {
             serverError == LoginError.NO_SERVER || serverError == LoginError.UNKNOWN -> {
+                if (localError == LoginError.INACTIVE) {
+                    errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
+                }
+
                 if (localError != null) {
                     errors["usernameOrEmail"] = context.getString(R.string.username_or_password_is_incorrect)
                     errors["password"] = context.getString(R.string.username_or_password_is_incorrect)
@@ -70,10 +68,26 @@ class LoginViewModel @Inject constructor(
             serverError == LoginError.INACTIVE -> {
                 errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
 
+                // Deactivate LocalUser
+                localUserEntity?.also {
+                    loginUseCases.modifyLocalUserDate(it.copy(isActive = false))
+                }
+
                 return null
             }
             serverError == null && localError == null -> {
                 localUser!!.token = userFromServer!!.token
+
+                // Check for difference between profile from server and the one stored locally
+                val ufs = userFromServer.user
+                val difference = ufs.compareToLocalUser(localUserEntity)
+                if (difference != 0) {
+                    loginUseCases.modifyLocalUserDate(localUserEntity.copy(
+                        name = if (difference and 0b1 != 0) ufs.name else localUserEntity.name,
+                        username = if (difference and 0b10 != 0) ufs.username else localUserEntity.username,
+                        email = if (difference and 0b100 != 0) ufs.email else localUserEntity.email,
+                    ))
+                }
 
                 return localUser
             }
@@ -90,6 +104,20 @@ class LoginViewModel @Inject constructor(
                 }
 
                 return null
+            }
+            serverError == null && localError == LoginError.INVALID_INPUT -> {
+                if (localUserEntity != null && userFromServer != null) {
+                    // Modify changed datas locally and set new password
+                    val ufs = userFromServer.user
+                    val difference = ufs.compareToLocalUser(localUserEntity)
+                    if (difference != 0) {
+                        loginUseCases.modifyLocalUserDate(user = localUserEntity.copy(
+                            name = if (difference and 0b1 != 0) ufs.name else localUserEntity.name,
+                            username = if (difference and 0b10 != 0) ufs.username else localUserEntity.username,
+                            email = if (difference and 0b100 != 0) ufs.email else localUserEntity.email,
+                        ), password = login.password)
+                    }
+                }
             }
         }
 
