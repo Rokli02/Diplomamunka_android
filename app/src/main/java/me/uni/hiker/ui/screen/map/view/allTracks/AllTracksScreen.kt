@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,8 +65,10 @@ fun AllTracksScreen(
         }
     }
 
+    val tracks by allTrackViewModel.clusteredTracksFlow.collectAsState()
+
     AllTracksView(
-        tracks = allTrackViewModel.clusteredTracks,
+        tracks = tracks,
         cameraPositionState = allTrackViewModel.cameraPositionState,
         focusTrack = focusTrack,
         isCurrentLocationEnabled = isGPSEnabled,

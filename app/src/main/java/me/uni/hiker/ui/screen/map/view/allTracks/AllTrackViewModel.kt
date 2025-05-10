@@ -2,7 +2,6 @@ package me.uni.hiker.ui.screen.map.view.allTracks
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.withTransaction
@@ -14,6 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.uni.hiker.R
 import me.uni.hiker.api.model.SaveRequestBody
@@ -29,10 +31,9 @@ import me.uni.hiker.model.track.AbstractTrack
 import me.uni.hiker.model.track.Track
 import me.uni.hiker.ui.screen.map.service.clusterTracks
 import javax.inject.Inject
-import kotlin.math.min
+import kotlin.math.pow
 
 const val TRACK_LOAD_DEBOUNCE_TIME = 250L
-const val CLUSTER_DISTANCE_DIVISOR = 6
 private val middleOfHungary = LatLng(47.48856, 19.04892)
 
 @HiltViewModel
@@ -44,7 +45,8 @@ class AllTrackViewModel @Inject constructor(
     private val pointDAO: PointDAO,
     private val trackService: TrackService,
 ): ViewModel() {
-    val clusteredTracks = mutableStateListOf<AbstractTrack>()
+    private val _clusteredTracksFlow = MutableStateFlow(listOf<AbstractTrack>())
+    val clusteredTracksFlow = _clusteredTracksFlow.asStateFlow()
     val cameraPositionState = CameraPositionState(CameraPosition.fromLatLngZoom(middleOfHungary, 14f))
     private var trackLoadJob: Job? = null
 
@@ -56,8 +58,6 @@ class AllTrackViewModel @Inject constructor(
         trackLoadJob = viewModelScope.launch {
             delay(TRACK_LOAD_DEBOUNCE_TIME)
 
-            clusteredTracks.clear()
-
             val dbTracks = trackDAO.findAll(
                 minLat = bounds.southwest.latitude,
                 maxLat = bounds.northeast.latitude,
@@ -66,9 +66,7 @@ class AllTrackViewModel @Inject constructor(
                 userId = userId,
             ).map(Track::fromEntity)
 
-            val clusterDistanceThreshold = min(
-                bounds.northeast.latitude - bounds.southwest.latitude,
-                bounds.northeast.longitude - bounds.southwest.longitude) / CLUSTER_DISTANCE_DIVISOR
+            val clusterDistanceThreshold = 360f / 2f.pow(cameraPositionState.position.zoom + 2)
 
             Log.d("ATVM", "Loading ${dbTracks.size} tracks from device | $bounds")
 
@@ -82,7 +80,7 @@ class AllTrackViewModel @Inject constructor(
                     maxLat = bounds.northeast.latitude,
                     minLon = bounds.southwest.longitude,
                     maxLon = bounds.northeast.longitude,
-                    clusterDistanceDivisor = clusterDistanceThreshold.toFloat(),
+                    clusterDistanceDivisor = clusterDistanceThreshold,
                     ids = idString,
                 )
 
@@ -102,7 +100,15 @@ class AllTrackViewModel @Inject constructor(
                 Log.e("ATVM", exc.message ?: "Couldn't load tracks from server")
             }
 
-            clusteredTracks.addAll(clusterTracks(dbTracks, clusterDistanceThreshold, remoteClusteredTracks))
+            val clusteredTracks = clusterTracks(dbTracks, clusterDistanceThreshold, remoteClusteredTracks)
+            _clusteredTracksFlow.update {
+                clusteredTracks
+            }
+
+            Log.d("ATVM", "___BREAK___")
+            clusteredTracks.forEach {
+                Log.d("ATVM", it.toString())
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -47,6 +48,13 @@ fun AllTracksView(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
+    val camereCenter = cameraPositionState.position.target
+    val markersState = remember (tracks.size, camereCenter.latitude, camereCenter.longitude) {
+        tracks.map { track ->
+            MarkerState(LatLng(track.lat, track.lon))
+        }
+    }
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
@@ -64,16 +72,13 @@ fun AllTracksView(
         ),
         onMapLoaded = onMapLoaded,
     ) {
-        tracks.run {
-            if (isEmpty()) return@run
-
-            forEach { track ->
+        if (tracks.isNotEmpty()) {
+            for ((index, track) in tracks.withIndex()) {
                 when (track) {
                     is Track -> {
                         Marker(
-                            state = MarkerState(LatLng(track.lat, track.lon)),
+                            state = markersState[index],
                             contentDescription = track.name,
-                            tag = track,
                             anchor = Offset(.5f, .5f),
                             onClick = {
                                 focusTrack(track)
@@ -83,15 +88,15 @@ fun AllTracksView(
                         )
                     }
                     is ClusteredTrack -> {
-                        val iconId = when {
-                            track.size < 10 -> R.drawable.cluster_1
-                            track.size < 25 -> R.drawable.cluster_2
-                            else -> R.drawable.cluster_3
+                        val (iconId, text) = when {
+                            track.size < 10 -> Pair(R.drawable.cluster_1, "${track.size}")
+                            track.size < 25 -> Pair(R.drawable.cluster_2, "10+")
+                            else -> Pair(R.drawable.cluster_3, "25+")
                         }
 
                         MarkerComposable(
-                            state = MarkerState(LatLng(track.lat, track.lon)),
-                            tag = track,
+                            keys = arrayOf(track.size, track.lat, track.lon),
+                            state = markersState[index],
                             anchor = Offset(.5f, .5f),
                             onClick = {
                                 coroutineScope.launch {
@@ -118,7 +123,7 @@ fun AllTracksView(
                                 softWrap = false,
                                 maxLines = 1,
                                 textAlign = TextAlign.Center,
-                                text = "${track.size}",
+                                text = text,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.W500,
                             )
