@@ -68,9 +68,10 @@ class RecordTrackViewModel @Inject constructor(
         if (LocationForegroundService.isRunning) return
 
         isRecording = true
-        recordedPoints.clear()
 
-        startFlowCollection()
+        val isResume = recordedPoints.isNotEmpty()
+
+        startFlowCollection(!isResume)
 
         viewModelScope.launch {
             val intent = Intent(context, LocationForegroundService::class.java).apply {
@@ -100,10 +101,12 @@ class RecordTrackViewModel @Inject constructor(
         viewModelScope.launch {
             if (pruneRecordedLocationTable) {
                 async { recordedLocationDAO.prune() }.await()
+            } else {
+                recordedPoints.clear()
+                recordedPoints.addAll(
+                    async { recordedLocationDAO.getAll() }.await().map(Point::fromEntity)
+                )
             }
-            recordedPoints.addAll(
-                async { recordedLocationDAO.getAll() }.await().map(Point::fromEntity)
-            )
 
             recordedPointsFlow!!.collect{
                 if (it == null) return@collect

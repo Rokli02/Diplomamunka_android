@@ -69,6 +69,7 @@
     <string name="unable_to_save">Sikertelen mentés</string>
     <string name="track_does_not_contain_points">A túra nem tartalmaz mérföldköveket</string>
     <string name="got_logged_out">Ki lettél jelentkeztetve!\nLépj be újra!</string>
+    <string name="notification_resume">Folytatás</string>
     <string name="notification_start">Rögzítés</string>
     <string name="notification_stop">Leállítás</string>
     <string name="notification_save">Túra Mentése</string>

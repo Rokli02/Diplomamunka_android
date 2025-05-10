@@ -66,6 +66,16 @@ fun BoxScope.RecordedMapUIView(
             }
             hasRecordedTrack -> {
                 Button(
+                    onClick = {
+                        startLocationService(context)
+                    },
+                    shape = buttonShape,
+                    colors = AcceptButtonColors,
+                ) {
+                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
+                    Text(text = context.getString(R.string.notification_resume))
+                }
+                Button(
                     onClick = saveRecordedTrack,
                     shape = buttonShape,
                     colors = DefaultButtonColors,
@@ -104,7 +114,7 @@ private fun RecordedMapUIViewPreview() {
     HikeRTheme {
         Box(modifier = Modifier.fillMaxWidth()) {
             RecordedMapUIView(
-                hasRecordedTrack = false,
+                hasRecordedTrack = true,
                 isRecording = false,
                 isGPSEnabled = true,
                 stopLocationService = {},

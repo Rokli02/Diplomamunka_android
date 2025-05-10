@@ -17,11 +17,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.uni.hiker.R
 import me.uni.hiker.exception.InvalidDataException
-import me.uni.hiker.ui.component.Loading
 import me.uni.hiker.ui.provider.LocalSnackbarContext
 import me.uni.hiker.ui.provider.SnackbarAction
 import me.uni.hiker.ui.provider.UserContext
@@ -60,7 +58,6 @@ fun BoxScope.RecordTrackScreen(
     val isGPSEnabled = rememberGPSEnabled(hasLocationPermission)
     val coroutineScope = rememberCoroutineScope()
     var isSaveModalOpen by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
 
     if (!isGPSEnabled) {
         AlertDialog(
@@ -111,13 +108,7 @@ fun BoxScope.RecordTrackScreen(
         stopLocationService = {
             recordTrackViewModel.stopLocationService(it)
 
-            isLoading = true
-            coroutineScope.launch {
-                delay(1000)
-
-                isSaveModalOpen = true
-                isLoading = false
-            }
+            isSaveModalOpen = true
         },
         startLocationService = recordTrackViewModel::startLocationService,
         saveRecordedTrack = {
@@ -127,10 +118,6 @@ fun BoxScope.RecordTrackScreen(
             coroutineScope.launch { recordTrackViewModel.dropRecordedTrack() }
         }
     )
-
-    if (isLoading) {
-        Loading()
-    }
 
     if (isSaveModalOpen) {
         SaveNewTrackModal(

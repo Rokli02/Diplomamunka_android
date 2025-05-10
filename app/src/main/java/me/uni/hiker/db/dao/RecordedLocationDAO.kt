@@ -22,4 +22,7 @@ interface RecordedLocationDAO {
 
     @Query("SELECT * FROM recorded_location ORDER BY id ASC")
     suspend fun getAll(): List<RecordedLocation>
+
+    @Query("SELECT * FROM recorded_location ORDER BY id DESC LIMIT :x")
+    suspend fun getLastX(x: Int): List<RecordedLocation>
 }

@@ -61,9 +61,19 @@ class LocationForegroundService : Service() {
     private fun start() {
         isRunning = true
 
-        val notification = createNotification()
-        startForeground(NOTIFICATION_ID, notification)
-        startLocationUpdates()
+        serviceScope.launch {
+            val lastRecords = recordedLocationDAO.getLastX(3)
+            for (i in lastRecords.lastIndex downTo 0) {
+                lastLocation.addCurrentLocation(Location(null).apply {
+                    latitude = lastRecords[i].lat
+                    longitude = lastRecords[i].lon
+                })
+            }
+
+            val notification = createNotification()
+            startForeground(NOTIFICATION_ID, notification)
+            startLocationUpdates()
+        }
     }
 
     private fun stop() {
