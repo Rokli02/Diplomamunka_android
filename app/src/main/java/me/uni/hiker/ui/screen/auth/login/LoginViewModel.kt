@@ -36,8 +36,8 @@ class LoginViewModel @Inject constructor(
         if (!loginUseCases.validateField(login, errorChecker)) { return null }
 
         // Check for local user
-        val (localUserEntity, localError) = loginUseCases.loginLocally(login)
-        var localUser = localUserEntity?.let { User.fromEntity(it) }
+        val (localUser, localError) = loginUseCases.loginLocally(login)
+        var user = localUser?.let { User.fromEntity(it) }
         val hasNetworkConnection = ConnectionService.hasConnection(context)
 
         if ((localError == LoginError.NOT_FOUND || localError == LoginError.INVALID_INPUT) && !hasNetworkConnection ) {
@@ -63,41 +63,41 @@ class LoginViewModel @Inject constructor(
                     return null
                 }
 
-                return localUser
+                return user
             }
             serverError == LoginError.INACTIVE -> {
                 errors["usernameOrEmail"] = context.getString(R.string.user_is_inactive)
 
                 // Deactivate LocalUser
-                localUserEntity?.also {
+                localUser?.also {
                     loginUseCases.modifyLocalUserDate(it.copy(isActive = false))
                 }
 
                 return null
             }
             serverError == null && localError == null -> {
-                localUser!!.token = userFromServer!!.token
-
                 // Check for difference between profile from server and the one stored locally
-                val ufs = userFromServer.user
-                val difference = ufs.compareToLocalUser(localUserEntity!!)
+                val ufs = userFromServer!!.user
+                val difference = ufs.compareToLocalUser(localUser!!)
                 if (difference != 0) {
-                    val modifiedLUD = loginUseCases.modifyLocalUserDate(localUserEntity.copy(
-                        name = if (difference and 0b1 != 0) ufs.name else localUserEntity.name,
-                        username = if (difference and 0b10 != 0) ufs.username else localUserEntity.username,
-                        email = if (difference and 0b100 != 0) ufs.email else localUserEntity.email,
+                    val modifiedLUD = loginUseCases.modifyLocalUserDate(localUser.copy(
+                        name = if (difference and 0b1 != 0) ufs.name else localUser.name,
+                        username = if (difference and 0b10 != 0) ufs.username else localUser.username,
+                        email = if (difference and 0b100 != 0) ufs.email else localUser.email,
                     ))
 
                     if (modifiedLUD != null) {
-                        localUser = User.fromEntity(modifiedLUD)
+                        user = User.fromEntity(modifiedLUD)
                     }
 
                 }
 
-                return localUser
+                user!!.token = userFromServer.token
+
+                return user
             }
             serverError == LoginError.NOT_FOUND && localError == null -> {
-                return localUser?.let { loginUseCases.signUpToServer(it, login.password) }
+                return user?.let { loginUseCases.signUpToServer(it, login.password) }
             }
             serverError == null && localError == LoginError.NOT_FOUND -> {
                 userFromServer?.also {
@@ -111,21 +111,22 @@ class LoginViewModel @Inject constructor(
                 return null
             }
             serverError == null && localError == LoginError.INVALID_INPUT -> {
-                if (localUserEntity != null && userFromServer != null) {
+                if (localUser != null && userFromServer != null) {
                     // Modify changed datas locally and set new password
                     val ufs = userFromServer.user
-                    val difference = ufs.compareToLocalUser(localUserEntity)
-                    val modifiedLUD = loginUseCases.modifyLocalUserDate(user = localUserEntity.copy(
-                        name = if (difference and 0b1 != 0) ufs.name else localUserEntity.name,
-                        username = if (difference and 0b10 != 0) ufs.username else localUserEntity.username,
-                        email = if (difference and 0b100 != 0) ufs.email else localUserEntity.email,
+                    val difference = ufs.compareToLocalUser(localUser)
+                    val modifiedLUD = loginUseCases.modifyLocalUserDate(user = localUser.copy(
+                        name = if (difference and 0b1 != 0) ufs.name else localUser.name,
+                        username = if (difference and 0b10 != 0) ufs.username else localUser.username,
+                        email = if (difference and 0b100 != 0) ufs.email else localUser.email,
                     ), password = login.password)
 
                     if (modifiedLUD != null) {
-                        localUser = User.fromEntity(modifiedLUD)
+                        user = User.fromEntity(modifiedLUD)
                     }
 
-                    return localUser
+                    user!!.token = userFromServer.token
+                    return user
                 }
 
                 return null

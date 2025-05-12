@@ -16,9 +16,9 @@ data class RemoteUser(
     fun compareToLocalUser(user: LocalUser): Int {
         var res = 0
 
-        if (user.name == this.name) res = res or 0b1
-        if (user.username == this.username)  res = res or 0b10
-        if (user.email == this.email)  res = res or 0b100
+        if (user.name != this.name) res = res or 0b1
+        if (user.username != this.username)  res = res or 0b10
+        if (user.email != this.email)  res = res or 0b100
 
         return res
     }
